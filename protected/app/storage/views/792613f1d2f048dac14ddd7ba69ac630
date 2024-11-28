@@ -1,0 +1,440 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+
+<?php require app_path().'/views/apqp_header.php'; ?>
+
+<script type="text/javascript" src="<?php echo Request::root(); ?>/protected/public/js/jquery.min.js"></script>
+
+
+ <script type="text/javascript" src="<?php echo Request::root(); ?>/protected/public/js/bootstrap-dropdown.js"></script>
+
+<style>
+.green-background{
+background-color:#00bfff; 
+}
+.blue-background{
+  background-color:#009933;
+}
+.red-background{
+  background-color:#ff0000;
+}
+.left-table-container{
+overflow-y:auto;  
+}
+.right-table-container{
+overflow-y:auto;  
+}
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+    padding:0;
+    vertical-align: top;
+    border-top:none;
+}
+.table>thead>tr>th {
+    vertical-align:top;
+    border-bottom:none;
+  height:90px;
+}
+.table>tbody>tr{
+height:71px;  
+}
+.only-top-bdr{
+border-top:1px solid #000;  
+}
+.bdr-left{
+border-left:1px solid #000; 
+}
+.sub-table>tbody>tr{
+border-bottom:1px solid #000;
+height:45px;
+border-right:1px solid #000;
+width: 58px;
+    display: block;
+text-align:center;  
+}
+.bdr-top{
+border-top:1px solid #000;  
+}
+.table>thead>tr{
+  border-top:1px solid #000;
+}
+.table>thead>tr>th{
+  border-right:1px solid #000;
+}
+/*left-table*/
+.left-table-container>.table>tbody>tr{
+border-bottom:1px solid #000;
+height: 90px;
+}
+.left-table-container>.table>tbody>tr>td{
+  border-left:1px solid #000;
+}
+.left-table-bdr-top{
+border-top:1px solid #000;
+vertical-align:middle;  
+}
+.left-sub-table{
+width:100%; 
+}
+.left-sub-table>tbody>tr{
+  height:45px;
+  display:block;
+}
+.bdr-only-top{
+  border-top:1px solid #000;
+}
+.right-table>tbody>tr{
+border-top:1px solid #000;
+border-right:1px solid #000;  
+}
+.right-table>tbody>tr:last-child{
+border-bottom:1px solid #000; 
+}
+.left-table-boder-right{
+  border-right: 1px solid #000;
+}
+
+.container-fluid{
+  width:100%;
+}
+.left-side-div{
+  width:60%;
+}
+.right-side-div{
+  width:40%;
+}
+
+</style>
+</head>
+
+<body>
+<div class="container-fluid">
+<div class="row">
+        <div class="col-sm-8">
+            <div class="page-heading">
+                <h1 style="font-size: 24px;
+    font-family: cursive;">Common Activity Gantt Chart</h1>
+            </div><!--/page-heading-->
+
+        </div>
+         <div class="col-sm-4">
+            <div class="page-heading pull-right">
+                <a class="btn btn-animate flat blue pd-btn" href="<?php echo Request::root().'/ganttChartCommonAct'; ?>">Back To Search</a>
+            </div><!--/page-heading-->
+
+
+        </div>
+    </div>
+
+  <div class="col-md-12">
+    <div class="col-md-8">
+     <a class="btn btn-animate flat blue pd-btn" href="<?php echo url('commonpdf/'); ?><?php echo '/'.$project_details->id;; ?>">PDF Download</a>
+     <a class="btn btn-animate flat blue pd-btn" href="<?php echo url('commonexcel/'); ?><?php echo '/'.$project_details->id;; ?>">Excel Download</a>
+     
+     
+    </div>
+  <!--   <div class="col-md-2" style="margin-left: 223px;">
+      <a class="btn btn-animate flat blue pd-btn" href="<?php echo Request::root().'/ganttChartCommonAct'; ?>">Back To Search</a>
+    </div> -->
+    </br></br>
+    <div class="col-md-12">
+  <div class="col-md-4"><h4>
+    <img src="<?php echo Request::root().'/uploads/logos/'.$project_details->logo_image; ?>"  alt="CM Logo">
+  </h4>
+ </div>
+ </div>
+    <div class="col-md-12">
+  <div class="col-md-4">
+
+    <h5><span style="font-weight: bold;">Project NO : </span><?php 
+
+    echo $project_details->project_no.' Revision '.$project_details->project_revision.' '. $project_details->checkHold; ?></h5>
+    <h5><span style="font-weight: bold;">Project Name : </span><?php echo $project_details->project_name ?></h5>
+    <h5><span style="font-weight: bold;">Manufacturing Location :</span> <?php echo $project_details->description ?></h5>
+    <h5><span style="font-weight: bold;">Project Start Date :</span> <?php echo $project_details->date ?></h5>
+    <h5><span style="font-weight: bold;">Project End Date : </span><?php echo date('d F Y',strtotime($project_details->EndDate)); ?></h5>
+    <h5><span style="font-weight: bold;">Document Number : </span><?php echo $project_details->document_no; ?></h5>
+    <h5><span style="font-weight: bold;">Project Lead and Top Management Approval :</span> <?php echo $project_details->top_app; ?></h5>
+    <h5><span style="font-weight: bold;">Customer :</span> <?php echo $project_details->cust; ?></h5>
+   
+   <?php
+    if(!empty($project_details->checkDrop)){
+    $check = $project_details->checkDrop;  ?>
+     <h5><span style="font-weight: bold;">Project is dropped by :</span> <?php echo $check->first_name.' '.$check->last_name;  ?></h5>
+     <h5><span style="font-weight: bold;">Remark :</span> <?php echo $check->remark; } ?></h5>
+
+</div>
+<div class="col-md-4">
+<?php $data = $project_details->ActivityDate;?>
+
+    <h5><span style="font-weight: bold;">Essem Event</span> </h5>
+    <h5><span style="font-weight: bold;">T-0 Sample Submission :</span> <?php if($data['T0SampleSub'] != '' ){  echo date('d F Y',strtotime($data['T0SampleSub'])) ; }?></h5>
+    <h5><span style="font-weight: bold;">T-1 Sample Submission :</span> <?php if($data['T1SampleSub'] != '' ){ echo date('d F Y',strtotime($data['T1SampleSub'])) ; } ?></h5>
+    <h5><span style="font-weight: bold;">Pilot lot Submission :</span> <?php if($data['pilotRun'] != '' ){  echo date('d F Y',strtotime($data['pilotRun'])); }?></h5>
+    <h5><span style="font-weight: bold;">SOP Date :</span> <?php if($project_details->sop_date != '0000-00-00'){ echo date('d F Y',strtotime($project_details->sop_date)); } ?></h5>
+    
+
+</div>
+<div class="col-md-4">
+    <h5><span style="font-weight: bold;">Customer Event</span></h5>
+    <h5><span style="font-weight: bold;"> T-0 Sample Approval : </span><?php if($data['T0SampleApp'] != '' ){  echo date('d F Y',strtotime($data['T0SampleApp'])) ; }?></h5>
+    <h5><span style="font-weight: bold;">T-1 Sample Approval :</span> <?php if($data['T1SampleApp'] != '' ){  echo date('d F Y',strtotime($data['T1SampleApp'])) ; } ?></h5>
+    <h5><span style="font-weight: bold;"> SOP Date : </span><?php if($project_details->cust_sop_date != '0000-00-00'){ echo date('d F Y',strtotime($project_details->cust_sop_date)); } ?></h5>
+    
+
+</div>
+  </div>
+
+  </div>
+
+
+
+    <div class="col-md-5 col-sm-6 xol-xs-6 left-side-div" style="padding-right:0;">
+      <div class="left-table-container">
+            <table class="table bdr-left-table left-table-boder-right"> 
+            <thead>              
+                <tr>
+                    <th class="bdr-left">Sr.No</th>
+                    <th  align="center">Gate</th>
+                    <th align="center">Activity</th>
+                    <th>Responsibility</th>
+                    <th></th>
+                    <th>Duration</th>
+                    <th>Activity Start Date</th>
+                    <th>Activity End Date</th>
+                </tr> 
+             </thead> 
+              <?php 
+                 $key = 1;
+                 $get_id = '';
+                 $pregate ='';
+                $premat='';
+                $pgate = '';
+                 foreach($activities as $z=>$row){
+
+                  $ngate = $row->gate_id;
+                  if($ngate != $pgate){
+                     ?>
+                    <tr style="height: 71px" class="left-table-bdr-top"><td  colspan="8" style="font-weight:bold;"><?php echo 'Phase '.$row->gate_id.' '.$row->Gate_Description;?></td></tr>
+                    <?php }
+                    $pgate = $ngate;
+                  if($z != 0)
+                  {
+                    if($get_id != $row->gate_id)
+                      $key = 1;
+                  }
+
+              ?>     
+              <?php if($row->material_id == 0){?>        
+                <tr class="left-table-bdr-top">
+                    <td><?php echo $row->gate_id.'.'.$key ?></td>
+                    <td><?php echo $row->Gate_Description ?></td>
+                    <td><?php echo $row->activityName ?></td>
+                    <td><?php echo $row->department_name?></td>
+                    <td>
+                      <table class="left-sub-table">
+                          <tr>
+                              <td>plan</td>
+                            </tr>
+                            <tr class="bdr-only-top">
+                              <td>Actual</td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>
+                      <table class="left-sub-table">
+                          <tr>
+                              <td align="center"><?php echo $row->lead_time; ?></td>
+                            </tr>
+                            <tr class="bdr-only-top" >
+                              <td><?php echo $row->actual_duaration; ?></td>
+                            </tr>
+                        </table>
+                    </td>
+                     <td>
+                      <table class="left-sub-table">
+                          <tr>
+                              <td><?php echo date('d M Y',strtotime($row->plan_start_date)); ?></td>
+                            </tr>
+                            <tr class="bdr-only-top">
+                              <td><?php if($row->actual_start_date != ""){
+                                  echo date('d M Y',strtotime($row->actual_start_date));
+                                } ?></td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>
+                      <table class="left-sub-table">
+                          <tr>
+                              <td><?php echo date('d M Y',strtotime($row->plan_end_date)); ?></td>
+                            </tr>
+                            <tr class="bdr-only-top">
+                              <td><?php if($row->actual_end_date != ""){
+                                echo date('d M Y',strtotime($row->actual_end_date));
+                              }
+                               ?></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr> 
+                <?php }else{ 
+                   $mat = DB::table('apqp_material_master')
+                          ->select('material_description')
+                          ->where('id',$row->material_id)
+                          ->get();
+                          $newmat = $row->material_id;
+                  if($ngate != $pregate || $newmat != $premat){ ?>
+                   <tr style="height: 71px" class="left-table-bdr-top"><td  colspan="6" style="font-weight:bold;"><?php echo $mat[0]->material_description;?></td></tr>
+
+                  <?php } $premat=$newmat;
+                  $pregate=$ngate;
+                  ?>
+                <tr class="left-table-bdr-top">
+                    <td><?php echo $row->gate_id.'.'.$key ?></td>
+                    <td><?php echo $row->Gate_Description ?></td>
+                    <td><?php echo $row->activityName ?></td>
+                    <td><?php echo $row->department_name?></td>
+                    <td>
+                      <table class="left-sub-table">
+                          <tr>
+                              <td>plan</td>
+                            </tr>
+                            <tr class="bdr-only-top">
+                              <td>Actual</td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>
+                      <table class="left-sub-table">
+                          <tr>
+                              <td align="center"><?php echo $row->lead_time; ?></td>
+                            </tr>
+                            <tr class="bdr-only-top" >
+                              <td><?php echo $row->actual_duaration; ?></td>
+                            </tr>
+                        </table>
+                    </td>
+                      <td>
+                      <table class="left-sub-table">
+                          <tr>
+                              <td><?php echo date('d M Y',strtotime($row->plan_start_date)); ?></td>
+                            </tr>
+                            <tr class="bdr-only-top">
+                              <td><?php if($row->actual_start_date != ""){
+                                  echo date('d M Y',strtotime($row->actual_start_date));
+                                } ?></td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>
+                      <table class="left-sub-table">
+                          <tr>
+                              <td><?php echo date('d M Y',strtotime($row->plan_end_date)); ?></td>
+                            </tr>
+                            <tr class="bdr-only-top">
+                              <td><?php if($row->actual_end_date != ""){
+                                echo date('d M Y',strtotime($row->actual_end_date));
+                              }
+                               ?></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr> 
+                  <?php } ?>
+          <?php 
+            $key++;
+            $get_id = $row->gate_id;
+          } ?>            
+            </table>
+        </div>
+    </div>
+    <div class="col-md-7 col-sm-6 col-xs-6 right-side-div" style="padding-left:0;">
+      <div class="right-table-container">
+          <table class="table bdr-right right-table"> 
+            <thead>              
+                <tr>
+                    
+                    <?php for($i=0;$i<count($project_all_dates);$i++){ ?>
+                    <th><?php echo date('d M Y',strtotime($project_all_dates[$i])); ?></th>
+                    <?php } ?>
+                    
+                </tr>
+             </thead>  
+             <tbody>
+             <?php 
+               $key = 1;
+               $get_id = '';
+                $pregate ='';
+                $premat='';
+                $pgate = '';
+               foreach($activities as $z=>$row){
+                 $ngate = $row->gate_id;
+                  if($ngate != $pgate){
+                     ?>
+                    <tr><td  class="bdr-only-top" colspan=<?php echo count($project_all_dates)+2;?> style="font-weight:bold;"></td></tr>
+                    <?php }
+                    $pgate = $ngate;
+                if($z != 0)
+                {
+                  if($get_id != $row->gate_id)
+                    $key = 1;
+                }
+              ?>   
+               <?php if($row->material_id == 0){?>           
+                <tr>
+                   
+                    <?php 
+                         $activity_row = $row->activity_row;
+                         //echo '';print_r($activity_row);exit()
+                         for($i = 0;$i<count($activity_row);$i++){ ?>
+                    
+                    <td>
+                      <table class="left-sub-table bdr-left ">
+                        <?php for($j =0;$j<count($activity_row[$i]);$j++){?>
+                          <tr class="<?php echo $j!=0 ?'bdr-only-top':''; ?> <?php echo $j==0 && $activity_row[$i]['plan'] == 1 ? 'green-background':($j==1 && $activity_row[$i]['actual'] == 1?( strtotime($row->actual_end_date) > strtotime($row->plan_end_date) )?'red-background':'blue-background':'') ;?>">
+                              <td></td>
+                            </tr>
+                          <?php } ?>
+                        </table>
+                    </td>
+                    <?php } ?>
+                </tr>
+
+                <?php }else{
+                   $newmat = $row->material_id;
+                  if($ngate != $pregate || $newmat != $premat){ ?>
+                   <tr style="height: 71px" class="left-table-bdr-top"><td  colspan=<?php echo count($project_all_dates)+2;?> style="font-weight:bold;"></tr>
+
+                  <?php } $premat=$newmat;
+                    $pregate=$ngate;
+                  ?>
+
+                  
+                  <tr>
+                  
+                    <?php 
+                         $activity_row = $row->activity_row;
+                         for($i = 0;$i<count($activity_row);$i++){ ?>
+                    
+                    <td>
+                      <table class="left-sub-table bdr-left ">
+                        <?php for($j =0;$j<count($activity_row[$i]);$j++){?>
+                          <tr class="<?php echo $j!=0 ?'bdr-only-top':''; ?> <?php echo $j==0 && $activity_row[$i]['plan'] == 1 ? 'green-background':($j==1 && $activity_row[$i]['actual'] == 1?( strtotime($row->actual_end_date) > strtotime($row->plan_end_date) )?'red-background':'blue-background':'') ;?>">
+                              <td></td>
+                            </tr>
+                          <?php } ?>
+                        </table>
+                    </td>
+                    <?php } ?>
+                </tr>
+
+                <?php } ?>
+                <?php } ?>                
+              </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>

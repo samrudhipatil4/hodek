@@ -1,0 +1,1 @@
+*   *   *   *   */var/www/html/CM/protected/app/send_schedule_email

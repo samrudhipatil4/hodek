@@ -1,0 +1,46 @@
+<?php
+        Route::controller('department', 'DepartmentController');
+                    Route::controller('subdepartment', 'SubdepartmentController');
+                    Route::controller('rolecontroller', 'RolecontrollerController');
+                    Route::controller('customercontroller', 'CustomercontrollerController');
+                    Route::controller('suppliercontroller', 'SuppliercontrollerController');
+                    Route::controller('logocontroller', 'LogocontrollerController');
+                    Route::controller('changestage', 'ChangestageController');
+                    Route::controller('changetype', 'ChangetypeController');
+                    Route::controller('changerequestpurpose', 'ChangerequestpurposeController');
+                    Route::controller('plantcode', 'PlantcodeController');
+                    Route::controller('dashboardlogo', 'DashboardlogoController');
+                    Route::controller('riskassessmentdocuments', 'RiskassessmentdocumentsController');
+                    Route::controller('riskassessmentpoints', 'RiskassessmentpointsController');
+                    Route::controller('loginpage', 'LoginpageController');
+                    Route::controller('steering', 'SteeringController');
+                    Route::controller('qa', 'QaController');
+                    Route::controller('Velo_Parameter','veloParameterController');
+                    Route::controller('TrackingSheet','trackingSheetParamController');
+                    Route::controller('Stakeholder','stakeholderController');
+                    Route::controller('SteeringCommiteeMember','SteeringCommiteeController');       
+                     Route::controller('projectMaster','projectMasterController');
+                     Route::controller('DepartmentList','departmentListController');
+                     Route::controller('CustomerCommunication','CustomerCommController');
+                     Route::controller('HorizontalDeployment','HorizDeploymentController');
+                     Route::controller('BusinessMaster','BusinessMasterController');
+                     Route::controller('ProjectManager','ProjectManagerController');
+                     Route::controller('DocumentVerifierAndConfig','DocumentVerAndConigController');
+                     Route::controller('ChangeSubtype','ChangeSubtypeController');
+                     Route::controller('FinalApproveCloser','finalApprovalController');
+                     Route::controller('Cftteamrepresentative','CftteamController');
+                     Route::controller('cooapprovalauthority','cooapprovalauthorityController');
+                      Route::controller('CommodityMaster','commodityMasterController');
+                       Route::controller('GateCommonActivity','GateCommonActivityController');
+                        Route::controller('GateCommodityActivity','GateCommodityActivityController');
+                         Route::controller('materialMaster','materialMasterController');
+                          Route::controller('newProject','newProjectController');
+                          Route::controller('draftProjectPlan','draftProjectController');
+                          Route::controller('holidayMaster','holidayMasterController');
+                          Route::controller('HoldProject','holdProjectController');
+                          Route::controller('DropProject','dropProjectController');
+                         Route::controller('ProjectRevisionDate','ProjectRevisionDateController');
+                          Route::controller('ProjectRevisionMaterial','ProjectRevisionMaterialController');
+                          Route::controller('TemplateMaster','apqpTemplateMasterController');
+                           Route::controller('GateMaster','GateMasterController')
+                    ?>

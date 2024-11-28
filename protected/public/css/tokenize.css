@@ -1,0 +1,11 @@
+.tokenize-sample { width: 100%; }
+.tokenize-sample .TokensContainer { height: 55px !important }
+.tokenize-sample * {
+    box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box;
+}
+
+.tokenize-sample ul.TokensContainer, .tokenize-sample ul.Dropdown {
+    border: 1px solid #D2D7D9 !important;
+}

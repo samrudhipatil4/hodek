@@ -1,0 +1,246 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no">
+<?php require app_path().'/views/apqp_header.php'; ?>
+<style>
+table, th, td {
+    
+     padding: 5px 3px 5px 8px;
+}
+/*body {font-family: "Lato", sans-serif;}*/
+
+/* Style the tab */
+div.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+/* Style the buttons inside the tab */
+
+div.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+div.tab button:hover {
+    background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+div.tab button.active {
+    background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 100px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+</style>
+</head>
+<body onload="openCity1(event, 'project_info','prjInfo')">
+    <div class="page-content row">
+      <!-- Page header -->
+      <div class="page-header">
+        <div class="page-title">
+          <h3>  <small></small></h3>
+        </div>
+        <ul class="breadcrumb">
+          <li><a href="<?php echo URL::to(''); ?>"><?php echo Lang::get(''); ?></a></li>
+          <li><a href="<?php echo URL::to(''); ?>">  </a></li>
+          <li class="active"><?php echo Lang::get(''); ?> </li>
+        </ul>
+              
+      </div>
+   
+       <div class="page-content-wrapper">
+  
+          <ul class="parsley-error-list">
+              <?php foreach($errors->all() as $error): ?>
+                  <li><?php echo $error; ?></li>
+              <?php endforeach; ?>
+          </ul>
+  <div class="sbox animated fadeInRight">
+      <div class="sbox-title"> <h4> <i class="fa fa-table"></i> <?php   ?> <small>  </small></h4></div>
+      <div class="sbox-content"> 	
+          
+<div class="col-md-12">
+  <div class="tab">
+    <button style="font-weight: bold;"  id="custInfo">Customer Information</button>
+    <button style="font-weight: bold;" id="custInput">Customer Inputs</button>
+    <button style="font-weight: bold;"  id="voice">Voice Of Customer</button>
+    <button style="font-weight: bold;" id="teamExp">Team Experience</button>
+    <button style="font-weight: bold;" id="proBench" >Product/Process Benchmark Details</button>
+    <button style="font-weight: bold;"  id="riskMgmt">Risk Management Analyasis</button>
+  </div>
+  
+
+
+  <div id="project_info" class="tabcontent">
+    <div class="form-group  " style="margin-top: -60px;
+  margin-bottom: 70px;"> 
+                    
+                    <div class="col-md-4">
+                    <select name='search_prj' id="search_prj" rows='5'  code='{$id}' 
+                class='select2 '  required  ></select>
+                      
+                     </div> 
+                     <div class="col-md-2" >
+                       <button id="searchProject">Search</button>
+                     </div>
+                    </div>	
+  <form name="project_info" class='form-horizontal' files = true id="project_info"  parsley-validate='' novalidate=' '>
+  <div class="row">
+    <div class="col-md-12">
+      <label for="Change Type Name" class=" control-label col-md-2 text-left" > Enquiry Number<span class="asterix"> * </span></label>
+      <div class="col-md-4">
+       <?php echo Form::text('enquiry_no', $data['enquiry_no'],array('class'=>'form-control', 'placeholder'=>'', 'id'=>'enquiry_no',  'required'=>'true','data-parsley-group'=>'first'  )); ?> 
+      </div>
+     
+     
+      <label for="Change Type Name" class=" control-label col-md-2 text-left" >Enquiry Date<span class="asterix"> * </span></label>
+      <div class="col-md-4">
+       <?php echo Form::text('enquiry_date', '', array('id' => 'datepicker','class' => 'form-control','required'=>'true','onkeydown'=>"return false;",'data-parsley-group'=>'first' ,'autocomplete'=>'off')); ?>
+      </div>
+    </div>
+  </div>
+   <br>
+  <div class="row">
+    <div class="col-md-12">
+      <label for="Change Type Name" class=" control-label col-md-2 text-left" > Customer Name<span class="asterix"> * </span></label>
+      <div class="col-md-4">
+        <select name='customer' id="customer" rows='5'  code='{$id}' 
+                class='select2 '  required  ></select>
+      </div>
+    
+      <label for="Change Type Name" class=" control-label col-md-2 text-left" >Customer Drawing/Revision Number<span class="asterix"> * </span></label>
+      <div class="col-md-4">
+        <?php echo Form::text('cust_rev', '', array('id' => 'cust_rev','class' => 'form-control','required'=>'true','data-parsley-group'=>'first' ,'autocomplete'=>'off')); ?>
+      </div>
+           
+      </div>
+    </div>
+  </div>	
+  <br>
+  <div class="row">
+    <div class="col-md-12">
+      <label for="Change Type Name" class=" control-label col-md-2 text-left" >Customer Part Number<span class="asterix"> * </span></label>
+          <div class="col-md-4">
+           <?php echo Form::text('cust_part_no', '', array('id' => 'cust_part_no','class' => 'form-control','required'=>'true','data-parsley-group'=>'first' ,'autocomplete'=>'off')); ?>
+      </div>
+    
+      <label for="Change Type Name" class=" control-label col-md-2 text-left" > Customer Contact Person<span class="asterix"> * </span></label>
+      <div class="col-md-4">
+       <?php echo Form::text('cust_cont_person', '',array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true','id'=>'cust_cont_person','data-parsley'=>'second'  )); ?> 
+      </div>
+  </div>
+  </div>	
+  <br>
+  <div class="row">
+    <div class="col-md-12">
+      <label for="Change Type Name" class=" control-label col-md-2 text-left" > Customer Person Contact Number</label>
+      <div class="col-md-4">
+        <?php echo Form::text('cust_person_no', '', array('id' => 'cust_person_no','class' => 'form-control','required'=>'true','data-parsley-group'=>'first' ,'autocomplete'=>'off')); ?>
+      </div>
+            
+      <label for="Change Type Name" class=" control-label col-md-2 text-left" >Customer Contact Person Email </label>
+      <div class="col-md-4">
+        <?php echo Form::text('cust_person_email', '', array('id' => 'cust_person_email','class' => 'form-control','required'=>'true','data-parsley-group'=>'first' ,'autocomplete'=>'off')); ?>      </div>
+    
+    </div>
+  </div>							
+  <br>
+  
+  <br>
+  <div class="row">
+    <div class="col-md-12">
+      <label for="Change Type Name" class=" control-label col-md-2 text-left" > Engine Details<span class="asterix"> * </span></label>
+      <div class="col-md-4">
+       <?php echo Form::text('engine_details','',array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true','id'=>'engine_details','data-parsley'=>'second'  )); ?> 
+      </div>
+    
+    
+      <label for="Change Type Name" class=" control-label col-md-2 text-left" > Engine Application Details<span class="asterix"> * </span></label>
+      <div class="col-md-4">
+       <?php echo Form::text('engine_appl_details', '',array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true','id'=>'engine_appl_details','data-parsley'=>'second'  )); ?> 
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <div class="col-md-12">
+      <label for="Change Type Name" class=" control-label col-md-2 text-left" > Similar Product Mfg.<span class="asterix"> * </span></label>
+      <div class="col-md-4">
+       <?php echo Form::text('similar_product_mfg','',array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true','id'=>'similar_product_mfg','data-parsley'=>'second'  )); ?> 
+      </div>
+    
+    
+      <label for="Change Type Name" class=" control-label col-md-2 text-left" >Name of Internal Customer<span class="asterix"> * </span></label>
+      <div class="col-md-4">
+       <?php echo Form::text('internal_cust', '',array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true','id'=>'internal_cust','data-parsley'=>'second'  )); ?> 
+      </div>
+    </div>
+  </div>
+  <br>
+
+
+
+  <div class="form-group">
+            <label class="col-sm-4 text-right">&nbsp;</label>
+            <div class="col-sm-8">				  
+     <button  class="tablinks btn btn-primary btn-sm" id="save_project">Save</button>
+      <button id="gate_infor" class="tablinks btn btn-primary btn-sm" onclick ="openCity(event, 'template_info','btn_template','prjInfo')">Next</button>
+      </div>
+      </div>
+  </form>
+  </div>
+  
+  
+  <div id="template_info" class="tabcontent">
+  
+  <div class="form-group" id="projectTemplate">
+  
+  </div>
+   <div class="form-group  " >
+    <label for="material" class=" control-label col-md-4 text-left" style="padding-left: 215px"> Template <span class="asterix"> * </span></label>
+    <div class="col-md-6">
+       <select name='template' id="template" rows='5'  code='{$template_id}' 
+  class='select2 '  required  ></select>
+     </div> 
+     <div class="col-md-2">
+       
+     </div>
+    </div>
+     <br> <br>
+      <div class="form-group">
+    <label class="col-sm-4 text-right">&nbsp;</label>
+    <div class="col-sm-8">		
+   
+    <button class="tablinks btn btn-primary btn-sm" id="save_template">Add</button>
+    
+    </div>
+    </div>
+  
+  <br><br>
+     <div class="form-group">
+    <label class="col-sm-4 text-right">&nbsp;</label>
+    <div class="col-sm-8">		
+    <button class="tablinks btn btn-primary btn-sm" onclick="openCity1(event,'project_info','prjInfo','btn_template')">Back</button>
+    <button class="tablinks btn btn-primary btn-sm" >Save</button>
+    <button id="dept_info" class="tablinks btn btn-primary btn-sm" onclick="saveTemplate(event, 'gate_info','gateInfo','btn_template')">Next</button>
+    </div>
+    </div>
+  </div>
+  
+  
+  

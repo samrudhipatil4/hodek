@@ -1,0 +1,707 @@
+<html>
+<head>
+<style>
+table, th, td {
+    
+     padding: 5px 3px 5px 8px;
+}
+/*body {font-family: "Lato", sans-serif;}*/
+
+/* Style the tab */
+div.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+/* Style the buttons inside the tab */
+
+div.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+div.tab button:hover {
+    background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+div.tab button.active {
+    background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 100px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+</style>
+</head>
+<body onload="openCity1(event, 'project_info')">
+  <div class="page-content row">
+    <!-- Page header -->
+    <div class="page-header">
+      <div class="page-title">
+        <h3> {{ $pageTitle }} <small>{{ $pageNote }}</small></h3>
+      </div>
+      <ul class="breadcrumb">
+        <li><a href="{{ URL::to('dashboard_admin') }}">{{ Lang::get('core.home') }}</a></li>
+		<li><a href="{{ URL::to('CommodityMaster?md='.$filtermd) }}">{{ $pageTitle }}</a></li>
+        <li class="active">{{ Lang::get('core.addedit') }} </li>
+      </ul>
+	  	  
+    </div>
+ 
+ 	<div class="page-content-wrapper">
+
+		<ul class="parsley-error-list">
+			@foreach($errors->all() as $error)
+				<li>{{ $error }}</li>
+			@endforeach
+		</ul>
+<div class="sbox animated fadeInRight">
+	<div class="sbox-title"> <h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small></h4></div>
+	<div class="sbox-content"> 	
+
+		
+<div class="col-md-12">
+						<div class="tab">
+  <button style="font-weight: bold;" class="tablinks" >Project Information</button>
+  <button style="font-weight: bold;" class="tablinks" >Gate Information</button>
+  <button style="font-weight: bold;" class="tablinks" >Material</button>
+  <button style="font-weight: bold;" class="tablinks" >Department and Team</button>
+  <button style="font-weight: bold;" class="tablinks" >Gate clearance</button>
+</div>
+
+<div id="project_info" class="tabcontent">
+<form name="project_info" class='form-horizontal' files = true id="project_info"  parsley-validate='' novalidate=' '>
+ 	<div class="form-group  " > 
+									<label for="Change Type Name" class=" control-label col-md-4 text-left num" style="padding-left: 250px";margin: 0 auto;> Project Number<span class="asterix"> * </span></label>
+									<div class="col-md-6">
+									  {{ Form::text('project_no', $row['project_no'],array('class'=>'form-control', 'placeholder'=>'', 'id'=>'project_no',  'required'=>'true','data-parsley-group'=>'first'  )) }} 
+									 </div> 
+									 <div class="col-md-2" >
+									 	
+									 </div>
+								  </div>
+								
+								  <div class="form-group  " >
+									<label for="Change Type Name" class=" control-label col-md-4 text-left" style="padding-left: 260px;margin: 0 auto;"> Project Name <span class="asterix"> * </span></label>
+									<div class="col-md-6">
+									  {{ Form::text('project_name', $row['project_no'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true','id'=>'project_name'  )) }} 
+									 </div> 
+									 <div class="col-md-2" id="msg">
+									 	
+									 </div>
+								  </div>
+								  
+								   <div class="form-group  " >
+									<label for="Change Type Name" class=" control-label col-md-4 text-left" style="padding-left: 215px;margin: 0 auto;"> manufacturing location <span class="asterix"> * </span></label>
+									<div class="col-md-6">
+									   <select name='mfg_location' id="mfg_location" rows='5'  code='{$id}' 
+							class='select2 '  required  ></select>
+									 </div> 
+									 <div class="col-md-2">
+									 	
+									 </div>
+								  </div>
+								  
+								   <div class="form-group  " >
+									<label for="Change Type Name" class=" control-label col-md-4 text-left" style="padding-left: 240px"> Project Start Date <span class="asterix"> * </span></label>
+									<div class="col-md-6">
+									
+									 {{ Form::text('date', '', array('id' => 'datepicker','class' => 'form-control','required'=>'true'))}}
+									
+									 </div> 
+									 <div class="col-md-2">
+									 	
+									 </div>
+								  </div>
+								
+		<div class="form-group">
+					<label class="col-sm-4 text-right">&nbsp;</label>
+					<div class="col-sm-8">				  
+   <button class="tablinks btn btn-primary btn-sm" id="save_project">Save</button>
+    <button id="gate_infor" class="tablinks btn btn-primary btn-sm" onclick ="openCity(event, 'gate_info')">Next</button>
+    </div>
+    </div>
+</form>
+</div>
+
+<div id="gate_info" class="tabcontent">
+ 
+ 	<div class="form-group  " id="gate">
+			<?php 
+			
+			$data = DB::table('apqp_gate_management_master')
+				->select('apqp_gate_management_master.*')
+				->get();
+				?>	
+				<table align="center" border="1"  width="70%" id="allGate">
+					<tr>
+					<td width="10%" align="center" >Sr.No.</td>
+					<td width="40%" align="center">Gate</td>
+					</tr>
+
+					<?php $i=1; foreach($data as $key){ ?>
+					<tr >
+						<td><?php echo $i;?></td>
+						<td><?php echo $key->Gate_Description;?></td>
+						<input type="hidden" name="gateid" id="<?php echo $i;?>" value="<?php echo $key->id;?>">
+					</tr>
+					<?php $i++;}?>
+				</table>					
+								  </div>
+								
+								  <br><br>
+		
+
+  <div class="form-group">
+					<label class="col-sm-4 text-right">&nbsp;</label>
+					<div class="col-sm-8">				  
+   <button class="tablinks btn btn-primary btn-sm" onclick="openCity1(event, 'project_info')">Back</button>
+ <button class="tablinks btn btn-primary btn-sm" id="saveGate">Save</button>
+<button  class="tablinks btn btn-primary btn-sm" onclick="saveGate(event, 'material_info')">Next</button>
+    </div>
+    </div>
+
+</div>
+
+<div id="material_info" class="tabcontent">
+<div class="form-group" id="projectMaterial">
+
+</div>
+ <div class="form-group  " >
+	<label for="material" class=" control-label col-md-4 text-left" style="padding-left: 215px"> Material <span class="asterix"> * </span></label>
+	<div class="col-md-6">
+	   <select name='material' id="material" rows='5'  code='{$id}' 
+class='select2 '  required  ></select>
+	 </div> 
+	 <div class="col-md-2">
+	 	
+	 </div>
+  </div>
+   <br> <br>
+    <div class="form-group">
+	<label class="col-sm-4 text-right">&nbsp;</label>
+	<div class="col-sm-8">		
+ 
+  <button class="tablinks btn btn-primary btn-sm" id="save_material">Add</button>
+  
+  </div>
+  </div>
+
+<br><br>
+   <div class="form-group">
+	<label class="col-sm-4 text-right">&nbsp;</label>
+	<div class="col-sm-8">		
+  <button class="tablinks btn btn-primary btn-sm" onclick="openCity1(event, 'gate_info')">Back</button>
+  <button class="tablinks btn btn-primary btn-sm" >Save</button>
+  <button id="dept_info" class="tablinks btn btn-primary btn-sm" onclick="saveMaterial(event, 'dept_team')">Next</button>
+  </div>
+  </div>
+</div>
+<div id="dept_team" class="tabcontent">
+<div class="form-group" id="dept">
+<?php 	$data = DB::table('apqp_gate_activity_master')
+				->leftjoin('tb_departments','apqp_gate_activity_master.responsible_department','=','tb_departments.d_id')
+				->select('apqp_gate_activity_master.*','tb_departments.d_name')
+				->where('d_id','!=',2)
+				->where('d_id','!=',11)
+				->groupBy('apqp_gate_activity_master.responsible_department')
+				->get(); ?>
+				<table border="1" width="100%">
+					<tr>
+					<td width="10%" align="center" >Sr.No.</td>
+					<td width="40%" align="center">Department</td>
+					<td width="40%" align="center">User</td>
+					<td width="10%" align="center">Action</td>
+					</tr>
+
+					<?php $i=1; foreach($data as $key){ ?>
+					<tr>
+						<td><?php echo $i;?></td>
+						<td><?php echo $key->d_name;?></td>
+						<td id='<?php echo $key->d_name;?>'></td>
+						<td align="center"><a   href="#" id=""  onclick="getUser(<?php echo $key->responsible_department;?>,'<?php echo $key->d_name;?>');return false;" data-position="bottom" data-delay="50" data-tooltip="Edit"><i class="fa fa-pencil"></i> </td>
+					</tr>
+					<?php $i++;}?>
+				</table>
+</div>
+<br> <br>
+								   <div class="form-group  " >
+									
+									<div class="col-md-3">
+									   <input style="width: 98%" type="text" name=""  id="dept_name"  disabled>
+									 </div> 
+									 <div class="col-md-3">
+									 	<select name='dept_user' id="dept_user" rows='5'  code='{$id}' 
+							class='select2 '  required  ></select>
+									 </div>
+									  <div class="col-md-2">
+									 	 <input style="width: 50%" type="submit" name="" value="ADD" id="add_dept">
+									 </div>
+
+
+									
+								  </div>
+								  <br> <br>
+
+ <div class="form-group">
+	<label class="col-sm-4 text-right">&nbsp;</label>
+	<div class="col-sm-8">
+  <button class="tablinks btn btn-primary btn-sm" onclick="openCity1(event, 'material_info')">Back</button>
+  <button class="tablinks btn btn-primary btn-sm" >Save</button>
+  <button class="tablinks btn btn-primary btn-sm" onclick="saveDeptNTeam(event, 'gate_clearance')">Next</button>
+  </div>
+  </div>
+</div>
+<div id="gate_clearance" class="tabcontent">
+  <div class="form-group">
+  	<?php 	$data = DB::table('apqp_gate_management_master')
+				->select('apqp_gate_management_master.*')
+				->get(); ?>
+				<table border="1" width="100%">
+					<tr>
+					<td width="10%" align="center">Sr.No.</td>
+					<td width="40%" align="center">Gate</td>
+					<td width="40%" align="center">Approving Authority</td>
+					<td width="40%" align="center">Action</td>
+					</tr>
+
+					<?php $i=1; foreach($data as $key){ ?>
+					<tr>
+						<td><?php echo $i;?></td>
+						<td><?php echo $key->Gate_Description;?></td>
+						<td></td>
+						<td align="center"><a   href="#" id=""  onclick="getUser();return false;" data-position="bottom" data-delay="50" data-tooltip="Edit"><i class="fa fa-pencil"></i> </td>
+					</tr>
+					<?php $i++;}?>
+				</table>
+  </div>
+  <br> <br>
+								   <div class="form-group  " >
+									
+									 <div class="col-md-3">
+									 	<select name='dept_user' id="dept_user" rows='5'  code='{$id}' 
+							class='select2 '  required  ></select>
+									 </div>
+									  <div class="col-md-2">
+									 	 <input style="width: 50%" type="submit" name="" value="ADD" id="add_dept"></select>
+									 </div>
+
+
+									
+								  </div>
+
+   <div class="form-group">
+	<label class="col-sm-4 text-right">&nbsp;</label>
+	<div class="col-sm-8">
+  <button class="tablinks btn btn-primary btn-sm" onclick="openCity(event, 'dept_team')">Back</button>
+  <button class="tablinks btn btn-primary btn-sm" >Save</button>
+</div>
+</div>
+</div>
+			</div>
+			
+			
+			<div style="clear:both"></div>	
+				
+					
+				
+		 
+		 
+	</div>
+</div>		 
+</div>	
+</div>	
+
+   <script type="text/javascript">
+   var base_url='<?php echo Request::root(); ?>/';
+
+   
+	$(document).ready(function() { 
+		 $("#mfg_location").jCombo("{{ URL::to('newProject/comboselect?filter=plant_code:plant_id:plant_code') }}",
+		{  selected_value : '{{ $row["mfg_location"] }}' }); 
+		 $("#material").jCombo("{{ URL::to('newProject/comboselect?filter=apqp_material_master:id:material_description') }}",
+		{  selected_value : '{{ $row["mfg_location"] }}' }); 
+	});
+
+	$("#save_project").click(function(evt){
+		
+		 evt.preventDefault();
+		var project_no =$("#project_no").val();
+	var project_name =$("#project_name").val();
+	var location =$("#mfg_location").val();
+	var date =$("#datepicker").val();
+	
+	
+			
+			$.ajax({
+                   url:base_url+'SaveProject',
+                    type: 'POST',
+                    data:{projectNo:project_no,proj_name:project_name,location:location,date:date},
+                    
+                    success: function (data) {
+                    if(data.trim() == 'Duplicate project'){
+                    		alert('Duplicate project');
+                    	}
+                    	}
+                    	
+                  	
+                  
+                 
+               
+		        });
+	});
+
+
+
+$("#add_dept").click(function(){
+	var dept = $("#dept_name").val();
+	var user = $("#dept_user").val();
+	alert(dept);
+	if(dept == ""){
+		alert("Department is not selected");
+	}else if(user == '' || user== null)	{
+		
+		alert("User is not selected");
+	}else{
+		alert('user');
+		  $('#'+dept).html(user);
+	}
+	
+});
+
+
+function getUser(d_id,d_name){
+	var name=d_name;
+	$("#dept_name").val(name); 
+		$.ajax({
+                   url:base_url+'getUser',
+                    type: 'POST',
+                    data:{d_id:d_id},
+                    
+                    success: function (data) {
+                    	$("#dept_user").html(data); 
+                  	$("#dept_name").val(name); 
+                  
+                    }
+               
+		        });
+}
+	</script>
+	<script>
+function openCity(evt, cityName) {
+	
+	var project_no =$("#project_no").val();
+	var project_name =$("#project_name").val();
+	var location =$("#mfg_location").val();
+	var date =$("#datepicker").val();
+
+	if(project_no == "" && project_name == '' && location=='' && date==''){
+		
+	}else{
+			 evt.preventDefault();
+			$.ajax({
+                   url:base_url+'SaveProject',
+                    type: 'POST',
+                    data:{projectNo:project_no,proj_name:project_name,location:location,date:date},
+                    
+                    success: function (data) {
+                    	$("#SessionProjectNo").val(data);
+                    	if(data.trim() == 'Duplicate project'){
+                    		alert('Duplicate project');
+                    	}else{
+
+							    var i, tabcontent, tablinks;
+
+							    tabcontent = document.getElementsByClassName("tabcontent");
+							    
+							    for (i = 0; i < tabcontent.length; i++) {
+							        tabcontent[i].style.display = "none";
+							    }
+							    tablinks = document.getElementsByClassName("tablinks");
+							   
+							    
+							    for (i = 0; i < tablinks.length; i++) {
+							        tablinks[i].className = tablinks[i].className.replace(" active", "");
+							    }
+							    document.getElementById(cityName).style.display = "block";
+
+							    evt.currentTarget.className += " active";
+						}
+
+       				}
+               
+				});
+   			 }
+
+}
+function saveGate(evt, cityName) {
+	
+	
+	var rowCount = $('#allGate tr').length;
+	var i;
+	var projGate = [];
+	for(i=1;i<rowCount;i++){
+		var id=i;
+		var gate =$("#"+id).val();
+		 projGate.push({ val: gate }); 
+		
+	}
+		
+		if(projGate.length == 0){
+			alert('Gate is not defined');
+		}else{
+			 evt.preventDefault();
+			$.ajax({
+                   url:base_url+'SaveGate',
+                    type: 'POST',
+                    data:{gate:projGate},
+                    
+                    success: function (data) {
+                    	$("#SessionProjectNo").val(data);
+                    		
+                    	}
+                
+		        });
+			$.ajax({
+                   url:base_url+'getMaterial',
+                    type: 'POST',
+                    data:{gate:projGate},
+                    
+                    success: function (data) {
+                    	$("#projectMaterial").html(data);
+                    		
+                    	}
+                
+		        });
+			
+
+    var i, tabcontent, tablinks;
+
+    tabcontent = document.getElementsByClassName("tabcontent");
+    
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+   
+    
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(cityName).style.display = "block";
+
+    evt.currentTarget.className += " active";
+    }
+
+}
+$("#saveGate").click(function(evt){
+	
+	
+	var rowCount = $('#allGate tr').length;
+	var i;
+	var projGate = [];
+	for(i=1;i<rowCount;i++){
+		var id=i;
+		var gate =$("#"+id).val();
+		 projGate.push({ val: gate }); 
+		
+	}
+		alert(projGate.length);
+		if(projGate.length == 0){
+			alert('Gate is not defined');
+		}else{
+			 evt.preventDefault();
+			$.ajax({
+                   url:base_url+'SaveGate',
+                    type: 'POST',
+                    data:{gate:projGate},
+                    
+                    success: function (data) {
+                    	$("#SessionProjectNo").val(data);
+                    	
+                    	if(data != 1){
+                    		
+                    	}
+                    	
+                  	
+                  
+                    }
+               
+		        });
+    
+    }
+
+});
+function saveMaterial(evt, cityName) {
+	
+	
+	var rowCount = $('#allMaterial tr').length;
+	if(rowCount == 1){
+		alert('Please add material');
+
+	}else{
+			
+	evt.preventDefault();
+    var i, tabcontent, tablinks;
+
+    tabcontent = document.getElementsByClassName("tabcontent");
+    
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+   
+    
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(cityName).style.display = "block";
+
+    evt.currentTarget.className += " active";
+   }
+
+}
+
+$("#save_material").click(function(){
+	var matrl = $("#material").val();
+	if(matrl == ''){
+		alert('Please select material');
+	}else{
+		$.ajax({
+                   url:base_url+'Savematerial',
+                    type: 'POST',
+                    data:{material:matrl},
+                    
+                    success: function (data) {
+                    	$("#SessionProjectNo").val(data);
+                    	
+                    	if(data.trim() == 'Material Already added'){
+                    		alert(data);
+                    	}
+                    	$.ajax({
+                   url:base_url+'getMaterial',
+                    type: 'POST',
+                    data:{},
+                    
+                    success: function (data) {
+                    	$("#projectMaterial").html(data);
+                    		
+                    	}
+                
+		        });
+                  	
+                  
+                    }
+               
+		        });
+		
+	}
+});
+function saveDeptNTeam(evt, cityName) {
+	
+	
+	var rowCount = $('#allGate tr').length;
+	var i;
+	var projGate = [];
+	for(i=1;i<rowCount;i++){
+		var id=i;
+		var gate =$("#"+id).val();
+		 projGate.push({ val: gate }); 
+		
+	}
+		
+		if(projGate.length == 0){
+			alert('Gate is not defined');
+		}else{
+			 evt.preventDefault();
+			$.ajax({
+                   url:base_url+'SaveGate',
+                    type: 'POST',
+                    data:{gate:projGate},
+                    
+                    success: function (data) {
+                    	$("#SessionProjectNo").val(data);
+                    		
+                    	}
+                
+		        });
+			$.ajax({
+                   url:base_url+'getMaterial',
+                    type: 'POST',
+                    data:{gate:projGate},
+                    
+                    success: function (data) {
+                    	$("#projectMaterial").html(data);
+                    		
+                    	}
+                
+		        });
+			
+
+    var i, tabcontent, tablinks;
+
+    tabcontent = document.getElementsByClassName("tabcontent");
+    
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+   
+    
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(cityName).style.display = "block";
+
+    evt.currentTarget.className += " active";
+    }
+
+
+}
+function openCity1(evt, cityName) {
+	
+	
+    var i, tabcontent, tablinks;
+
+    tabcontent = document.getElementsByClassName("tabcontent");
+    
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+   
+    
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(cityName).style.display = "block";
+
+    evt.currentTarget.className += " active";
+   
+}
+
+
+</script>	
+<script>
+$(function() {
+$( "#datepicker" ).datepicker();
+});
+</script>
+
+
+
+	</body>
+	</html>	 
