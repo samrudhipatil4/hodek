@@ -1,0 +1,358 @@
+<?php require app_path().'/views/header.php'; ?>
+<style>
+    .full button span {
+        background-color: limegreen;
+        border-radius: 32px;
+        color: black;
+    }
+    .partially button span {
+        background-color: orange;
+        border-radius: 32px;
+        color: black;
+    }
+</style>
+<?php if($request_id == ""){
+    $r_id=Request::segment(3);
+
+}else{
+    // $r_id=Session::get('r_id');
+    $r_id=$request_id;
+
+}
+if($initiator == ""){
+    $initiator =  Session::get('uid');
+
+}else{
+    $initiator = $initiator;
+}
+?>
+  <div class="main-wrapper">
+    <div class="container-fluid">
+
+              <div class="row two-col-row mg-bottom-0">
+                <div class="col-sm-2">
+
+              <!-- Sidebar Comes here! -->
+
+					<?php require app_path().'/views/sidebar.php'; ?>
+
+					<!-- sidebar ends here -->
+
+                </div><!--/s2-->
+                <div class="col-sm-10">
+
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <div class="page-heading">
+                          <h1>Update Initial Information Sheet</h1>
+                        </div><!--/page-heading-->
+                      </div>
+                    </div>
+
+                  <div class="content-wrapper">
+
+                      <div class="status-bar"  ng-controller="updateInitSheetCtrl" ng-init="fetch('<?=$r_id;?>',<?=$initiator;?>)">
+                          <div class="row mg-bottom-0">
+                              <div class="col-sm-4">
+                                  <ul class="pd-none">
+                                      <li> <strong>Task Record CM Number :</strong> <span ng-bind="cmno"></span></li>
+                                  </ul>
+                              </div>
+                              <div class="col-sm-8">
+                                  <ul class="pull-right">
+                                      <li> <strong>Current State :</strong> <span ng-bind="status"></li>
+                                  </ul>
+                              </div>
+                          </div>
+                      </div><!--/status-bar-->
+
+                     <div class="form-wrapper" >
+
+                         <div ng-controller="updateInitSheetCtrl" ng-init="fetch1(<?=$r_id;?>)">
+
+                             <div class="row" ng-show="visibleTable">
+                                 <div class="col-sm-12">
+                                     <div class="table-wrapper">
+                                         <table class="striped">
+                                             <thead>
+                                             <tr>
+                                                 <th width="10%">Sr. No.</th>
+                                                 <th>Function Name</th>
+                                                 <th>Team Member</th>
+                                                 <th>Status</th>
+                                                 <th width="12%">Action</th>
+                                             </tr>
+                                             </thead>
+                                             <tbody>
+                                             <tr ng-repeat="record in availableOptions" ng-class="{'success' : records[$index]}">
+                                                 <td><%$index+1%>.</td>
+                                                 <td><%record.d_name%></td>
+                                                 <td><%record.first_name%> <%record.last_name%></td>
+                                                 <td><%record.fetch_status|statusfilter%></td>
+                                                 <td>
+                                                     <table cellpadding="0" cellspacing="0">
+
+
+                                                         <tr class="border-none">
+                                                             <td style="border:0px !important; font-size:16px;"><a href="javascript:void(0)" ng-click="EditRecord($index,record.update_sheet_dep_id)" class="" data-position="bottom" data-delay="50" data-tooltip="Edit"><i class="fa fa-pencil"></i> </a></td>
+                                                         </tr>
+
+                                                     </table>
+                                                 </td>
+
+                                             </tr>
+                                             </tbody>
+                                         </table>
+                                     </div>
+
+                                 </div>
+                             </div>
+
+                         <div class="add-record" ng-if="newReocord1">
+                             <div class="row mg-top mg-btm">
+
+                                 <form method="post" role="form" ng-class="{'submitted': submitted}" name="updaterisksheet" novalidate ng-submit="(submitted = true) && updaterisksheet.$invalid && $event.preventDefault()" autocomplete="off">
+                                     <div>
+
+                                         <div class="input-field col-sm-3 mg-top">
+                                             <label for="textarea1">Function Name</label>
+                                             <input type="text" id="textarea1" class="form-control mg-top" rows="2" ng-model="risks.d_name" readonly name="de_risking" >
+                                             <input type="hidden" name="d_id" value="<%risks_new.d_id%>">
+                                             <input type="hidden" name="d_id" value="<%risks_new.oldUserId%>">
+
+                                         </div>
+
+                                         <div class="input-field col-sm-3 mg-top">
+                                             <label for="first_name">Select Team Member</label>
+                                             <select class="form-control" name="first_name"  ng-model="risks.team_member" required="">
+
+                                                 <option ng-repeat="option in risks_new" value="<%option.id%>"><%option.first_name%> <%option.last_name%></option>
+
+                                             </select>
+                                             <span ng-cloak class="error-msg " ng-show="(updaterisksheet.first_name.$dirty || invalidSubmitAttempt) && updaterisksheet.first_name.$error.required"> Choose Team Member.</span>
+                                         </div>
+
+                                         <div class="mg-top">
+                                             <div class="col-sm-12 mg-top">
+                                                 <button class="btn btn-animate flat blue pd-btn" type="submit" ng-disabled="isDisabled1" name="action" ng-click="UpdateRecord(updaterisksheet,<?=$r_id;?>)">Save</button>
+                                                 <button class="btn btn-animate flat blue pd-btn" type="submit" ng-disabled="isDisabled12" name="action" ng-click="cancel(updaterisksheet)">Cancel</button>
+
+                                             </div>
+                                         </div>
+                                     </div>
+
+                                 </form>
+                             </div>
+                         </div>
+                        </div>
+                        </div>
+
+                         <hr/>
+  <div ng-controller="updateInitSheetCtrl" ng-init="getExistingAttachment('<?php echo $r_id; ?>')">
+                          <!--<form method="post" role="form"  name="updatesheetForm" novalidate ng-submit="(submitted = true) && updatesheetForm.$invalid && $event.preventDefault()" autocomplete="off">-->
+                          <form method="post" role="form"  name="attachmentForm" enctype="multipart/form-data" novalidate ng-submit="(submitted = true) && updatesheetForm.$invalid && $event.preventDefault()" autocomplete="off" action="<?php echo Request::root().'/deleteAttachment'?>">
+                              <div>
+                                  <div class="input-field col-sm-6 ">
+
+                                      <label for="first_name"><strong>Team Leader:</strong></label> <?php echo Session::get('fid');?>
+
+                                  </div>
+
+                                  <div class="row">
+                                      <div class="col-sm-12">
+                                       <label></label>
+                                  <table border="0">
+                                      <tr ng-repeat="result in attachFile">
+                                          <td width="25%">
+                                              <%result.attached_file%>
+                                          </td>
+                                          <td width="75%">
+                                              <input type="hidden" name="attach_id"  value="<%result.id%>">
+                                              <input type="hidden" name="ExistingAttach_name" value="<%result.attached_file%>">
+                                              <input type="hidden" name="dele_existAttachment" value="1">
+                                              <button  type="submit" id="button" class="tooltipped" data-position="bottom" data-delay="50"  data-tooltip="Delete File" ng-click="deleteAttachement(result.attached_file)"><i class="fa fa-trash-o"></i></button>
+                                          </td>
+
+                                      </tr>
+                                  </table>
+
+                                          </div>
+                                      </div>
+                                      </div>
+
+                          </form>
+                      </div>
+                      <div ng-controller="updateInitSheetCtrl">
+                          <!--<form method="post" role="form"  name="updatesheetForm" novalidate ng-submit="(submitted = true) && updatesheetForm.$invalid && $event.preventDefault()" autocomplete="off">-->
+                          <form method="post" role="form"  name="attachmentForm" enctype="multipart/form-data" novalidate ng-submit="(submitted = true) && updatesheetForm.$invalid && $event.preventDefault()" autocomplete="off" action="<?php echo Request::root().'/attachment/'?><?=Request::segment(3);?>">
+                              <div>
+
+                                  <div class="row">
+                                      <div class="col-sm-12">
+
+                                          <div class="col-sm-1 ">
+
+                                              <label ><strong>Attach File:</strong></label>
+
+                                              </div>
+                                          <div class="input-field col-sm-3">
+                                              <input type="file" name="changeReqAttachment"  ng-model="firstName">
+                                      <input type="hidden" name="existingAttachment" multiple value="1">
+                                              </div>
+                                      <button class="btn btn-animate flat blue pd-btn" type="submit" name="action" ng-disabled=false ng-click="getExistingAttachmentCount('<?php echo $r_id; ?>')">Upload</button>
+                                    </div>
+
+                                  </div>
+                                  <label ><strong>To replace file please delete attached file first and then upload new file.</strong></label>
+                          </form>
+                      </div>
+
+                         <div ng-controller="updateInitSheetCtrl" ng-init="getStockInfo('<?php echo $r_id; ?>')">
+                         <form method="post" role="form"  name="updatesheetForm" novalidate ng-submit="(submitted = true) && updatesheetForm.$invalid && $event.preventDefault()" autocomplete="off">
+                        <div>
+                        <div class="row">
+                          <div class="col-sm-9">
+
+                              
+
+                          <div class="row">
+                            <div class="col-sm-5 ">
+                            <p class="radio-label inline-lbl-radio">Current index level stock to be used until stock is zero</p>
+                            </div>
+                                  <div class="col-sm-1 ">
+                                    <p class="np-pd">
+                                        <input class="with-gap" name="selected" type="radio" id="yes" value="1" ng-model="updatesheet.selected" required>
+                                        <label for="yes">Yes</label>
+
+                                    </p>
+                                  </div>
+                                  <div class="col-sm-1 ">
+                                    <p class="np-pd">
+                                        <input class="with-gap" name="selected" type="radio" id="no" value="2"  ng-model="updatesheet.selected" required>
+                                        <label for="no">No</label>
+
+                                    </p>
+                                    <span ng-cloak class="error-msg " ng-show="(updatesheetForm.group1.$dirty || invalidSubmitAttempt) && updatesheetForm.group1.$error.required"> Option is Required.</span>
+
+                                  </div>
+
+                          </div>
+                          </div>
+                        </div>
+
+                        <div class="row" ng-if="updatesheet.selected == '2'">
+                          <div class="col-sm-9">
+                            <div class="row ">
+                              <div class="col-sm-5 ">
+                                <p class="radio-label inline-lbl">if No, Change implementation date of new index level</p>
+                              </div>
+                                <div class="col-md-3 date-bg" ng-controller="DatepickerDemoCtrl">
+                                    <label for="cost" class="control-label">Select Date</label>
+
+                                    <input type="text" name="currentTime"  readonly data-date-format="dd.mm.yyyy" ng-model="updatesheet.currentTime" jqdatepicker required/>
+                                    <span class="glyphicon glyphicon-calendar icon_cal"></span>
+
+                                    </label>
+                                    <span class="error-msg " ng-show="(updatesheetForm.currentTime.$dirty || invalidSubmitAttempt) && updatesheetForm.currentTime.$error.required"> This field is required.</span>
+
+                                    <!-- <label for="startdate" class="control-label">Select Date</label>
+                                     <p class="input-group">
+                                         <input class="text-height" type="text"  id="currentTime" name="currentTime" value="<%updatesheet.currentTime1|date:'dd/MM/yyyy'%>" readonly required>
+
+                                         <input type="text" style="visibility:hidden" class="form-control datepicker-popup" uib-datepicker-popup  ng-model="updatesheet.currentTime1" name="currentTime1" is-open="status.opened" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)"  close-text="Close" />
+                                       <span class="input-group-btn">
+                                         <button type="button" class="btn btn-default btn-cal btn-btm " ng-click="open($event)"><span class="glyphicon glyphicon-calendar"></span></button>
+                                       </span>
+                                     </p>
+                                     <span ng-cloak class="error-msg " ng-show="(updatesheetForm.currentTime1.$dirty || invalidSubmitAttempt) && updatesheetForm.currentTime1.$error.required"> This field is required.</span>-->
+
+                                </div>
+
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="row" ng-if="updatesheet.selected == '1'">
+                          <div class="col-sm-9">
+                            <div class="row ">
+                              <div class="col-sm-5 ">
+                                <p class="radio-label inline-lbl ">if Yes, Change implementation date of new index level</p>
+                              </div>
+                              <div class="input-field col-sm-3">
+                                  <label for="current-stock">Current Stock</label>
+                                <input id="current-stock" type="number" class="form-control" name="stock" ng-model="updatesheet.stock" >
+
+                                <span ng-cloak class="error-msg " ng-show="(updatesheetForm.stock.$dirty || invalidSubmitAttempt) && updatesheetForm.stock.$error.required"> Current Stock is required.</span>
+                                  <span ng-cloak class="error-msg " ng-show="(updatesheetForm.stock.$dirty || invalidSubmitAttempt) && updatesheetForm.stock.$error.number"> Current Stock is Invalid.</span>
+
+                              </div>
+
+
+                                <div class="col-md-3 date-bg" ng-controller="DatepickerDemoCtrl">
+                                  <!--  <label for="startdate" class="control-label">Select Date</label>-->
+
+                                    <label for="cost" class="control-label">Select Date</label>
+
+                                    <input type="text" name="currentTime"  readonly data-date-format="dd.mm.yyyy" ng-model="updatesheet.currentTime" jqdatepicker required/>
+                                    <span class="glyphicon glyphicon-calendar icon_cal"></span>
+
+                                    </label>
+                                    <span class="error-msg " ng-show="(updatesheetForm.currentTime.$dirty || invalidSubmitAttempt) && updatesheetForm.currentTime.$error.required"> This field is required.</span>
+
+                                    <!-- <p class="input-group">
+                                         <input class="text-height" type="text"  id="currentTime" name="currentTime" value="<%updatesheet.currentTime1| date:'dd/MM/yyyy'%>" readonly required>
+
+                                         <input type="text" style="visibility:hidden" class="form-control" uib-datepicker-popup  ng-model="updatesheet.currentTime1" name="currentTime1" is-open="status.opened" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)"  close-text="Close" />
+                                           <span class="input-group-btn">
+                                             <button type="button" class="btn btn-default btn-cal btn-btm" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                                           </span>
+                                         <span ng-cloak class="error-msg " ng-show="(updatesheetForm.currentTime1.$dirty || invalidSubmitAttempt) && updatesheetForm.currentTime1.$error.required"> This field is required.</span>
+
+                                     </p>-->
+                                  <!--  <input type="hidden"  id="currentTime" name="currentTime" value="<%updatesheet.currentTime1| date:'dd/MM/yyyy'%>">-->
+
+                                </div>
+
+
+                            </div>
+                          </div>
+                        </div>
+                <?php if($page=="modifyByUser"){?>
+                        <div class="row">
+                              <div class="col-sm-12">
+                                <button class="btn btn-animate flat blue pd-btn" type="submit" name="action" ng-disabled="isDisabled" ng-click="addinitial_info_sheet(updatesheetForm,<?=Request::segment(3);?>,<?=Request::segment(4);?>)">Send Mail</button>
+
+                                  <div class="loading-spiner-holder" data-loading >
+                                      <div class="loading-spiner">
+                                          <img src="<?php echo Request::root(); ?>/protected/public/images/Twirl.gif" />
+                                      </div>
+                                  </div>
+                              </div>
+                        </div>
+                <?php }else{?>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <button class="btn btn-animate flat blue pd-btn" type="submit" name="action" ng-disabled="isDisabled" ng-click="saveInfo_sheet(updatesheetForm,<?=$r_id;?>)">Save</button>
+
+                                    <div class="loading-spiner-holder" data-loading >
+                                        <div class="loading-spiner">
+                                            <img src="<?php echo Request::root(); ?>/protected/public/images/Twirl.gif" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php }?>
+                      </form>
+                     </div>
+
+                     </div><!--/form-warpper-->
+
+                  </div><!--/content-wrapper-->
+                </div><!--/s10-->
+              </div><!--/row-->
+
+      </div><!--/container-->
+
+  </div><!--/main-wrapper-->
+
+  <?php require app_path().'/views/footer.php'; ?>

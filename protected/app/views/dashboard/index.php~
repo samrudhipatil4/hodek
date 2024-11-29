@@ -1,0 +1,519 @@
+<?php require app_path().'/views/header.php'; ?>
+
+   <div class="main-wrapper">
+    <div class="container">
+         
+              <div class="row">
+                <div class="col s12">
+                  <div class="page-heading">
+                    <h1>Welcome to <?php echo Session::get('fid');?> Member</h1>
+                  </div><!--/page-heading-->    
+                </div>
+              </div>
+
+              <!-- Notification counter -->
+              <div class="row" ng-controller="DashboardCounterCtrl">
+                <div class="col s3">
+                  <div class="card-panel shadow-none counter mg-bottom-0">
+                    <div class="row mg-none">
+                      <div class="col s5">
+                        <div class="circle-icon">
+                          <i class="fa fa-retweet"></i>
+                        </div>
+                      </div>
+                      <div class="col s7 pd-none">
+                        <hgroup>
+                          <h5>Change Management</h5>
+                          <h2><span ng-bind="counter.cm"></span></h2>
+                        </hgroup>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col s3">
+                  <div class="card-panel shadow-none counter mg-bottom-0">
+                    <div class="row mg-none">
+                      <div class="col s5">
+                        <div class="circle-icon">
+                          <i class="fa fa-pencil"></i>
+                        </div>
+                      </div>
+                      <div class="col s7 pd-none">
+                        <hgroup>
+                          <h5>Drafted</h5>
+                          <h2><span ng-bind="counter.drafted"></span></h2>
+                        </hgroup>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col s3">
+                  <div class="card-panel shadow-none counter mg-bottom-0">
+                    <div class="row mg-none">
+                      <div class="col s5">
+                        <div class="circle-icon">
+                          <i class="fa fa-check"></i>
+                        </div>
+                      </div>
+                      <div class="col s7 pd-none">
+                        <hgroup>
+                          <h5>Accepted</h5>
+                          <h2><span ng-bind="counter.accepted"></span></h2>
+                        </hgroup>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col s3">
+                  <div class="card-panel shadow-none counter mg-bottom-0">
+                    <div class="row mg-none">
+                      <div class="col s5">
+                        <div class="circle-icon">
+                          <i class="fa fa-times"></i>
+                        </div>
+                      </div>
+                      <div class="col s7 pd-none">
+                        <hgroup>
+                          <h5>Rejected</h5>
+                          <h2><span ng-bind="counter.rejected"></span></h2>
+                        </hgroup>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div><!--/row-->
+              
+              <!-- pie/donut charts -->
+              <div class="row">
+                <div class="col s3">                    
+                  <div class="card chart-card shadow-none">
+                    <div class="card-image activator waves-effect waves-block waves-light">
+                      <div ng-controller="PieCtrl1" class="pie-wrapper">
+                           <canvas id="pie" class="chart chart-pie" chart-data="data" chart-labels="labels"></canvas> 
+                      </div><!--/chart-ctrl-->
+                    </div>
+                    <div class="card-content">
+                      <span class="card-title activator">Change Type<i class="mdi-navigation-more-vert right"></i></span>                      
+                    </div>
+                    <div id="card-reveal" class="card-reveal ps-container ps-active-y">
+                      <span class="card-title ">Change Type<i class="mdi-navigation-close Small right"></i></span>
+                      <p>Consectetur adipisicing elit. Place at voluptates laboriosam, aspernatur minima minus.</p>
+                      <ul class="legend">
+                        <li><span class="tomato"></span>Process</li>
+                        <li><span class="sky-blue"></span>Design</li>
+                        <li><span class="grey"></span>Supplier</li>                      
+                      </ul>
+                    </div>
+                  </div><!--/card-->            
+                </div><!--/col s4-->
+
+                <div class="col s3" ng-controller="PieCtrl2" >
+                <div class="card chart-card shadow-none">
+                    <div class="card-image waves-effect waves-block waves-light">
+                      <div class="pie-wrapper">
+                           <canvas id="pie" class="chart chart-pie" chart-data="data" chart-labels="labels" ></canvas>
+                      </div><!--/chart-ctrl-->
+                    </div>
+                    <div class="card-content">
+                      <span class="card-title activator">Change Stage<i class="mdi-navigation-more-vert right"></i></span>                      
+                    </div>
+                    <div class="card-reveal">
+                      <span class="card-title ">Change Stage<i class="mdi-navigation-close Small right"></i></span>
+                      <p>Consectetur adipisicing elit. Place at voluptates laboriosam, aspernatur minima minus.</p>
+                      <ul class="legend">
+                        <li><span class="grey"></span>Devalopment</li>
+                        <li><span class="sky-blue"></span>Series</li>                       
+                      </ul>
+                    </div>
+                  </div><!--/card-->
+                </div><!--/col s4-->
+
+                <div class="col s6"> 
+                <div class="card chart-card shadow-none">
+                    <div class="card-image waves-effect waves-block waves-light">
+                      <div ng-controller="BarCtrl" class="bar-wrapper">
+                          <canvas id="bar" class="chart chart-bar"  chart-data="data" chart-labels="labels"></canvas>
+                      </div><!--/chart-ctrl-->
+                    </div>
+                    <div class="card-content">
+                      <span class="card-title activator">Change Purpose<i class="mdi-navigation-more-vert right"></i></span>                      
+                    </div>
+                    <div class="card-reveal">
+                      <span class="card-title ">Change Purpose<i class="mdi-navigation-close Small right"></i></span>
+                      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+                      <ul class="legend">
+                        <li>CR &equals; Cost Reduction</li>
+                        <li>CFB &equals; Customer Feedback</li> 
+                        <li>EOP &equals; Ease OF Production</li>
+                        <li>STD &equals; Standardization</li> 
+                        <li>QU &equals; Quality Upgrade</li>
+                        <li>DU &equals; Drawing Upgrade</li> 
+                        <li>PRD &equals; Productivity</li>
+                        <li>OTH &equals; Others</li>                         
+                      </ul>
+                    </div>
+                  </div><!--/card-->
+                </div><!--/col s4-->
+              </div><!--/row-->
+
+            <!--// Assigned Task to Me-->
+            <div class="row" ng-controller="AssignedTaskToMeCtrl">
+              <div class="col s12">                
+                  <ul class="collapsible accordian-task" data-collapsible="accordion">
+                    <li class="active">
+                      <div class="collapsible-header active waves-effect">Assigned Task to Me <span class="records right"><span ng-bind="assignedtasks.length"> </span> Records <i class="fa fa-caret-down mg-none color-skyblue right"></i> </span></div>
+                      <div class="collapsible-body">
+                        <div class="toolbar">
+                          <div class="row mg-none">
+                            <div class="col s6">
+                             <div class="pagination-wrapper">
+                               <ul>
+                                 <li>Page 
+                                  <ul class="pagination">
+                                    <li class="waves-effect"><a href="javascript:void(0)" ng-click="prevPage()"><i class="fa fa-angle-left"></i></a></li>
+                                    <li class="active">
+                                      <div class="select-box">
+                                        <select class="browser-default" ng-model='currentPage' ng-change="setPage(currentPage)">
+                                             <option ng-repeat="n in range(1,pageCount())" value="{{n}}" ng-selected="n === currentPage">{{n}}</option>
+                                        </select>
+                                      </div>
+                                    </li>  
+                                    <li class="waves-effect"><a href="javascript:void(0)" ng-click="nextPage()"><i class="fa fa-angle-right"></i></a></li>
+                                  </ul>
+                                 </li>
+                                 <li>
+                                
+                                 <ul>
+                                 <li> View </li>
+                                  <li>
+                                   <div class="select-box">
+                                    <select class="browser-default" ng-model="entryLimit">
+                                       <option value="5">5</option>
+                                        <option value="10">10</option>
+                                        <option value="20">20</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                    </select>
+                                   </div>
+                                  </li>
+                                  <li>per page</li>
+                                 </ul>
+                                 </li>
+                                 <li>
+                                     Total <span ng-bind="filtered.length"> </span> records found
+                                 </li>
+                               </ul>
+                             </div>
+                            </div>
+                            <div class="col s6">                             
+                                <form>
+                                    <div class="search-form">
+                                        <input type="text" class="input-search" Placeholder="Refine your results" ng-model="search">
+                                      <button type="submit" class="btn-search"><i class="fa fa-search"></i></button>
+                                    </div>
+                                </form>                              
+                            </div>
+                          </div>
+                        </div>
+                        <div class="table-wrapper">
+                          <table class="striped">
+                            <thead>
+                              <tr>
+                                 <th>Sr. No.</th>
+                                  <th><a href="javascript:void(0)" ng-click="sortType = 'cm_no'; sortReverse = !sortReverse" class="datasort">CM No. <i class="fa fa-arrows-v"></i></a></th>
+                                  <th><a href="javascript:void(0)" ng-click="sortType = 'cid'; sortReverse = !sortReverse" class="datasort">CR Initiation Date <i class="fa fa-arrows-v"></i></a></th>
+                                  <th><a href="javascript:void(0)" ng-click="sortType = 'cn'; sortReverse = !sortReverse" class="datasort">Customer Name <i class="fa fa-arrows-v"></i></a></th>
+                                  <th><a href="javascript:void(0)" ng-click="sortType = 'in'; sortReverse = !sortReverse" class="datasort">Initiator Name <i class="fa fa-arrows-v"></i></a></th>
+                                  <th><a href="javascript:void(0)" ng-click="sortType = 'cs'; sortReverse = !sortReverse" class="datasort">Change Stage <i class="fa fa-arrows-v"></i></a></th>
+                                  <th><a href="javascript:void(0)" ng-click="sortType = 'ct'; sortReverse = !sortReverse" class="datasort">Change Type<i class="fa fa-arrows-v"></i></a></th>
+                                  <th><a href="javascript:void(0)" ng-click="sortType = 'poc'; sortReverse = !sortReverse" class="datasort">Purpose of Change <i class="fa fa-arrows-v"></i></a></th>
+                                  <th><a href="javascript:void(0)" ng-click="sortType = 'rb'; sortReverse = !sortReverse" class="datasort">Reported By<i class="fa fa-arrows-v"></i></a></th>
+                                  <th><a href="javascript:void(0)" ng-click="sortType = 'imd'; sortReverse = !sortReverse" class="datasort">Implementation Date <i class="fa fa-arrows-v"></i></a> </th>
+                                  <th><a href="javascript:void(0)" ng-click="sortType = 'status'; sortReverse = !sortReverse" class="datasort">Status <i class="fa fa-arrows-v"></i></a></th>
+                                  <th>Action</th>                              
+                              </tr>
+                            </thead>
+
+                            <tbody>
+                                
+                                
+                                <tr ng-repeat="assignedTask in filtered = (assignedtasks| filter:search | orderBy : sortType:sortReverse) | startFrom:(currentPage - 1) * entryLimit | limitTo:entryLimit">
+                                <td><span ng-bind="$index+1"></span>.</td>
+                                <td><span ng-bind="assignedTask.cm_no"></span></td>
+                                <td><span ng-bind="assignedTask.cid"></span></td>
+                                <td><span ng-bind="assignedTask.cn"></span></td>
+                                <td><span ng-bind="assignedTask.in"></span></td>
+                                <td><span ng-bind="assignedTask.cs"></span></td>
+                                <td><span ng-bind="assignedTask.ct"></span></td>
+                                <td><span ng-bind="assignedTask.poc"></span></td>
+                                <td><span ng-bind="assignedTask.rb"></span></td>
+                                <td><span ng-bind="assignedTask.imd"></span></td>
+                                <td><span class="color-blue"><span ng-bind="assignedTask.status"></span></span></td>                                
+                                <td>
+                                  <table class="actions">
+                                    <tr>
+                                      <td>
+                                      <a href="#" class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="View record"><i class="mdi-action-visibility"></i></a>
+                                      </td>
+                                      <td>
+                                      <a href="#" class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="Advance request"><i class="fa fa-check"></i></a>
+                                      </td>
+                                      <td><a href="#" class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="Edit record"><i class="fa fa-pencil"></i></a>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr> 
+                                                     
+                          </table>
+                        </div><!--/table-wrapper-->
+                      </div><!--/collapsible-body-->
+                    </li>
+                  </ul>
+              </div><!--/s12-->
+            </div><!--/row-->
+
+          <!--// Saved CR By Me-->
+            <div class="row" ng-controller="SavedCrByMeCtrl">
+              <div class="col s12">
+                  <ul class="collapsible accordian-task" data-collapsible="accordion">
+                    <li>
+                      <div class="collapsible-header waves-effect">Saved CR By Me <span class="records right"><span ng-bind="assignedtasks.length"> </span> Records  <i class="fa fa-caret-down mg-none color-skyblue right"></i> </span></div>
+                      <div class="collapsible-body">
+                        <div class="toolbar">
+                          <div class="row mg-none">
+                            <div class="col s6">
+                             <div class="pagination-wrapper">
+                               <ul>
+                                 <li>Page 
+                                  <ul class="pagination">
+                                    <li class="waves-effect"><a href="javascript:void(0)" ng-click="prevPage()"><i class="fa fa-angle-left"></i></a></li>
+                                    <li class="active">
+                                      <div class="select-box">
+                                        <select class="browser-default" ng-model='currentPage' ng-change="setPage(currentPage)">
+                                             <option ng-repeat="n in range(1,pageCount())" value="{{n}}" ng-selected="n === currentPage">{{n}}</option>
+                                        </select>
+                                      </div>
+                                    </li>  
+                                    <li class="waves-effect"><a href="javascript:void(0)" ng-click="nextPage()"><i class="fa fa-angle-right"></i></a></li>
+                                  </ul>
+                                 </li>
+                                 <li>
+                                
+                                 <ul>
+                                 <li> View </li>
+                                  <li>
+                                   <div class="select-box">
+                                    <select class="browser-default" ng-model="entryLimit">
+                                       <option value="5">5</option>
+                                        <option value="10">10</option>
+                                        <option value="20">20</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                    </select>
+                                   </div>
+                                  </li>
+                                  <li>per page</li>
+                                 </ul>
+                                 </li>
+                                 <li>
+                                     Total <span ng-bind="filtered.length"> </span> records found
+                                 </li>
+                               </ul>
+                             </div>
+                            </div>
+                            <div class="col s6">                             
+                                <form>
+                                    <div class="search-form">
+                                        <input type="text" class="input-search" Placeholder="Refine your results" ng-model="search">
+                                      <button type="submit" class="btn-search"><i class="fa fa-search"></i></button>
+                                    </div>
+                                </form>                              
+                            </div>
+                          </div>
+                        </div>
+                        <div class="table-wrapper">
+                          <table class="striped">
+                            <thead>
+                              <tr>
+                                 <th>Sr. No.</th>
+                                  <th><a href="javascript:void(0)" ng-click="sortType = 'cm_no'; sortReverse = !sortReverse" class="datasort">CM No. <i class="fa fa-arrows-v"></i></a></th>
+                                  <th><a href="javascript:void(0)" ng-click="sortType = 'cid'; sortReverse = !sortReverse" class="datasort">CR Initiation Date <i class="fa fa-arrows-v"></i></a></th>
+                                  <th><a href="javascript:void(0)" ng-click="sortType = 'cn'; sortReverse = !sortReverse" class="datasort">Customer Name <i class="fa fa-arrows-v"></i></a></th>
+                                  <th><a href="javascript:void(0)" ng-click="sortType = 'in'; sortReverse = !sortReverse" class="datasort">Initiator Name <i class="fa fa-arrows-v"></i></a></th>
+                                  <th><a href="javascript:void(0)" ng-click="sortType = 'cs'; sortReverse = !sortReverse" class="datasort">Change Stage <i class="fa fa-arrows-v"></i></a></th>
+                                  <th><a href="javascript:void(0)" ng-click="sortType = 'ct'; sortReverse = !sortReverse" class="datasort">Change Type<i class="fa fa-arrows-v"></i></a></th>
+                                  <th><a href="javascript:void(0)" ng-click="sortType = 'poc'; sortReverse = !sortReverse" class="datasort">Purpose of Change <i class="fa fa-arrows-v"></i></a></th>
+                                  <th><a href="javascript:void(0)" ng-click="sortType = 'rb'; sortReverse = !sortReverse" class="datasort">Reported By<i class="fa fa-arrows-v"></i></a></th>
+                                  <th><a href="javascript:void(0)" ng-click="sortType = 'imd'; sortReverse = !sortReverse" class="datasort">Implementation Date <i class="fa fa-arrows-v"></i></a> </th>
+                                  <th><a href="javascript:void(0)" ng-click="sortType = 'status'; sortReverse = !sortReverse" class="datasort">Status <i class="fa fa-arrows-v"></i></a></th>
+                                  <th>Action</th>                              
+                              </tr>
+                            </thead>
+
+                            <tbody>
+                                
+                                
+                                <tr ng-repeat="assignedTask in filtered = (assignedtasks| filter:search | orderBy : sortType:sortReverse) | startFrom:(currentPage - 1) * entryLimit | limitTo:entryLimit">
+                                <td><span ng-bind="$index+1"></span>.</td>
+                                <td><span ng-bind="assignedTask.cm_no"></span></td>
+                                <td><span ng-bind="assignedTask.cid"></span></td>
+                                <td><span ng-bind="assignedTask.cn"></span></td>
+                                <td><span ng-bind="assignedTask.in"></span></td>
+                                <td><span ng-bind="assignedTask.cs"></span></td>
+                                <td><span ng-bind="assignedTask.ct"></span></td>
+                                <td><span ng-bind="assignedTask.poc"></span></td>
+                                <td><span ng-bind="assignedTask.rb"></span></td>
+                                <td><span ng-bind="assignedTask.imd"></span></td>
+                                <td><span class="color-blue"><span ng-bind="assignedTask.status"></span></span></td>                                
+                                <td>
+                                  <table class="actions">
+                                    <tr>
+                                      <td>
+                                      <a href="#" class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="View record"><i class="mdi-action-visibility"></i></a>
+                                      </td>
+                                      <td>
+                                      <a href="#" class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="Advance request"><i class="fa fa-check"></i></a>
+                                      </td>
+                                      <td><a href="#" class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="Edit record"><i class="fa fa-pencil"></i></a>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr> 
+                                                     
+                          </table>
+                        </div><!--/table-wrapper-->
+                      </div><!--/collapsible-body-->
+                  
+                    </li>
+                  </ul>
+              </div><!--/s12-->
+            </div><!--/row-->
+
+            <!--// Assigned Task By Me-->
+            <div class="row" ng-controller="AssignedTaskByMeCtrl">
+              <div class="col s12">
+                 <ul class="collapsible accordian-task" data-collapsible="accordion">
+                    <li>
+                      <div class="collapsible-header waves-effect">Assigned Task By Me <span class="records right"><span ng-bind="assignedtasks.length"> </span> Records <i class="fa fa-caret-down mg-none color-skyblue right"></i> </span></div>
+                      <div class="collapsible-body">
+                        <div class="toolbar">
+                          <div class="row mg-none">
+                            <div class="col s6">
+                             <div class="pagination-wrapper">
+                               <ul>
+                                 <li>Page 
+                                  <ul class="pagination">
+                                    <li class="waves-effect"><a href="javascript:void(0)" ng-click="prevPage()"><i class="fa fa-angle-left"></i></a></li>
+                                    <li class="active">
+                                      <div class="select-box">
+                                        <select class="browser-default" ng-model='currentPage' ng-change="setPage(currentPage)">
+                                             <option ng-repeat="n in range(1,pageCount())" value="{{n}}" ng-selected="n === currentPage">{{n}}</option>
+                                        </select>
+                                      </div>
+                                    </li>  
+                                    <li class="waves-effect"><a href="javascript:void(0)" ng-click="nextPage()"><i class="fa fa-angle-right"></i></a></li>
+                                  </ul>
+                                 </li>
+                                 <li>
+                                
+                                 <ul>
+                                 <li> View </li>
+                                  <li>
+                                   <div class="select-box">
+                                    <select class="browser-default" ng-model="entryLimit">
+                                       <option value="5">5</option>
+                                        <option value="10">10</option>
+                                        <option value="20">20</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                    </select>
+                                   </div>
+                                  </li>
+                                  <li>per page</li>
+                                 </ul>
+                                 </li>
+                                 <li>
+                                     Total <span ng-bind="filtered.length"> </span> records found
+                                 </li>
+                               </ul>
+                             </div>
+                            </div>
+                            <div class="col s6">                             
+                                <form>
+                                    <div class="search-form">
+                                        <input type="text" class="input-search" Placeholder="Refine your results" ng-model="search">
+                                      <button type="submit" class="btn-search"><i class="fa fa-search"></i></button>
+                                    </div>
+                                </form>                              
+                            </div>
+                          </div>
+                        </div>
+                        <div class="table-wrapper">
+                          <table class="striped">
+                            <thead>
+                              <tr>
+                                 <th>Sr. No.</th>
+                                  <th><a href="javascript:void(0)" ng-click="sortType = 'cm_no'; sortReverse = !sortReverse" class="datasort">CM No. <i class="fa fa-arrows-v"></i></a></th>
+                                  <th><a href="javascript:void(0)" ng-click="sortType = 'cid'; sortReverse = !sortReverse" class="datasort">CR Initiation Date <i class="fa fa-arrows-v"></i></a></th>
+                                  <th><a href="javascript:void(0)" ng-click="sortType = 'cn'; sortReverse = !sortReverse" class="datasort">Customer Name <i class="fa fa-arrows-v"></i></a></th>
+                                  <th><a href="javascript:void(0)" ng-click="sortType = 'in'; sortReverse = !sortReverse" class="datasort">Initiator Name <i class="fa fa-arrows-v"></i></a></th>
+                                  <th><a href="javascript:void(0)" ng-click="sortType = 'cs'; sortReverse = !sortReverse" class="datasort">Change Stage <i class="fa fa-arrows-v"></i></a></th>
+                                  <th><a href="javascript:void(0)" ng-click="sortType = 'ct'; sortReverse = !sortReverse" class="datasort">Change Type<i class="fa fa-arrows-v"></i></a></th>
+                                  <th><a href="javascript:void(0)" ng-click="sortType = 'poc'; sortReverse = !sortReverse" class="datasort">Purpose of Change <i class="fa fa-arrows-v"></i></a></th>
+                                  <th><a href="javascript:void(0)" ng-click="sortType = 'rb'; sortReverse = !sortReverse" class="datasort">Reported By<i class="fa fa-arrows-v"></i></a></th>
+                                  <th><a href="javascript:void(0)" ng-click="sortType = 'imd'; sortReverse = !sortReverse" class="datasort">Implementation Date <i class="fa fa-arrows-v"></i></a> </th>
+                                  <th><a href="javascript:void(0)" ng-click="sortType = 'status'; sortReverse = !sortReverse" class="datasort">Status <i class="fa fa-arrows-v"></i></a></th>
+                                  <th>Action</th>                              
+                              </tr>
+                            </thead>
+
+                            <tbody>
+                                
+                                
+                                <tr ng-repeat="assignedTask in filtered = (assignedtasks| filter:search | orderBy : sortType:sortReverse) | startFrom:(currentPage - 1) * entryLimit | limitTo:entryLimit">
+                                <td><span ng-bind="$index+1"></span>.</td>
+                                <td><span ng-bind="assignedTask.cm_no"></span></td>
+                                <td><span ng-bind="assignedTask.cid"></span></td>
+                                <td><span ng-bind="assignedTask.cn"></span></td>
+                                <td><span ng-bind="assignedTask.in"></span></td>
+                                <td><span ng-bind="assignedTask.cs"></span></td>
+                                <td><span ng-bind="assignedTask.ct"></span></td>
+                                <td><span ng-bind="assignedTask.poc"></span></td>
+                                <td><span ng-bind="assignedTask.rb"></span></td>
+                                <td><span ng-bind="assignedTask.imd"></span></td>
+                                <td><span class="color-blue"><span ng-bind="assignedTask.status"></span></span></td>                                
+                                <td>
+                                  <table class="actions">
+                                    <tr>
+                                      <td>
+                                      <a href="#" class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="View record"><i class="mdi-action-visibility"></i></a>
+                                      </td>
+                                      <td>
+                                      <a href="#" class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="Advance request"><i class="fa fa-check"></i></a>
+                                      </td>
+                                      <td><a href="#" class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="Edit record"><i class="fa fa-pencil"></i></a>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr> 
+                                                     
+                          </table>
+                        </div><!--/table-wrapper-->
+                      </div><!--/collapsible-body-->
+                  
+                    </li>
+                  </ul>
+              </div><!--/s12-->
+            </div><!--/row-->
+
+            
+      </div><!--/container-->
+  </div><!--/main-wrapper-->
+
+<?php require app_path().'/views/footer.php'; ?>
+
+  </body>
+</html>

@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="cmApp">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title> Add Change Request | CM </title>
+
+    <!-- Bootstrap -->
+    <link href="css/materialize.min.css" rel="stylesheet">
+    <link href="css/prism.min.css" rel="stylesheet">
+    <link href="css/font-awesome.min.css" rel="stylesheet">   
+    <link href="css/custom.css" rel="stylesheet">     
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+  </head>
+  <body>
+    
+   <header>    
+       <div class="navbar-fixed">
+        <nav class="top-navigation">
+          <div class="nav-wrapper">
+            <div class="logo-wrapper">              
+              <a href="./dashboard.html" class="logo"><img src="./images/company-logo.png" alt="Company Logo"></a>  
+            </div><!--logo-wrapper-->
+            
+            <div class="menu-wrapper">
+              <div class="row mg-bottom-0">
+                <div class="col s9">
+                    <ul id="left-nav" class="left">
+                    <li>
+                      <a class="waves-effect waves-light" href="./dashboard.html"><i class="icon dashboard"></i> Dashboard</a>
+                    </li>
+                    <li class="active">
+                      <a class="waves-effect waves-light" href="./add-change-request.html"><i class="icon add"></i> Add Change Request</a>
+                    </li>
+                    <li>
+                      <a class="waves-effect waves-light" href="./view.html"><i class="icon view"></i> View</a>
+                    </li>
+                    <li>
+                      <a class="waves-effect waves-light" href="./advance-search.html"><i class="icon search"></i> Search</a>
+                    </li>
+                    <li>
+                      <a class="waves-effect waves-light" href="./reports.html"><i class="icon report"></i> Reports</a>
+                    </li>
+                    <li>
+                      <a class="waves-effect waves-light" href="./scm.html"><i class="icon scm"></i> SCM</a>
+                    </li>
+                  </ul>
+                </div>
+                <div class="col s3">
+                    <ul id="right-nav" class="right">
+                      <li class="notification">
+                        <a href="#" class="waves-effect waves-light">
+                        <i class="mdi-social-notifications"></i><span>2</span></a>
+                      </li>
+                      <li class="profile">
+                      <a href="#" class="waves-effect waves-light">
+                        <span>John ipsome</span>
+                      </a>
+                        <ul class="dropdown">
+                          <li><a href="./profile.html" class="waves-effect waves-light"><i class="mdi-action-perm-identity"></i>Edit Profile</a></li>
+                          <!--<li><a href="#" class="waves-effect waves-light"><i class="mdi-action-settings"></i>Setting</a></li>-->
+                          <li><a href="#" class="waves-effect waves-light"><i class="mdi-action-lock-outline"></i>Log Out</a></li>
+                        </ul>
+                      </li>                     
+                       
+                    </ul>
+                </div>
+              </div>
+            
+            </div><!--/header-nav-->            
+            <div style="clear:both;"></div>
+          </div><!--/nav-wrapper-->
+        </nav><!--/top-navigation-->
+      </div><!--/navbar-fixed-->
+  </header>
+
+
+  <div class="main-wrapper">
+    <div class="container">
+
+              <div class="row two-col-row mg-bottom-0">
+                <div class="col s2">
+                  <aside class="left-sidebar">
+                    <div class="side-box">                      
+                      <ul class="collection with-header">
+                        <li class="collection-header">Recent Assigned Task To Me</li>
+                        <li class="collection-item"><a href="#">DCM/2015/1</a></li>
+                        <li class="collection-item"><a href="#">DCM/2015/1</a></li>
+                        <li class="collection-item"><a href="#">DCM/2015/1</a></li>
+                        <li class="collection-item"><a href="#">DCM/2015/1</a></li>
+                        <li class="collection-item"><a href="#">DCM/2015/1</a></li>
+                      </ul>
+                    </div>
+
+                   <!--<div class="side-box">                      
+                      <ul class="collection with-header">
+                        <li class="collection-header">Recent Saved CR By Me</li>
+                        <li class="collection-item"><a href="#">DCM/2015/1</a></li>
+                        <li class="collection-item"><a href="#">DCM/2015/1</a></li>
+                        <li class="collection-item"><a href="#">DCM/2015/1</a></li>
+                        <li class="collection-item"><a href="#">DCM/2015/1</a></li>
+                        <li class="collection-item"><a href="#">DCM/2015/1</a></li>
+                      </ul>
+                    </div>-->
+
+                    <div class="side-box">                      
+                      <ul class="collection with-header">
+                        <li class="collection-header">Recent Assigned Task By Me</li>
+                        <li class="collection-item"><a href="#">DCM/2015/1</a></li>
+                        <li class="collection-item"><a href="#">DCM/2015/1</a></li>
+                        <li class="collection-item"><a href="#">DCM/2015/1</a></li>
+                        <li class="collection-item"><a href="#">DCM/2015/1</a></li>
+                        <li class="collection-item"><a href="#">DCM/2015/1</a></li>
+                      </ul>
+                    </div>
+
+                  </aside>
+                </div><!--/s2-->
+                <div class="col s10">
+
+                  <div class="row">
+                      <div class="col s12">
+                        <div class="page-heading">
+                          <h1>Add Change Request</h1>
+                        </div><!--/page-heading-->    
+                      </div>
+                    </div>
+
+                  <div class="content-wrapper">                    
+                    <div class="row">
+                      <div class="col s12">
+                        <div class="page-heading">
+                          <h1>New Change Request Form</h1>
+                        </div><!--/page-heading-->    
+                      </div>
+                    </div>                    
+                    <div class="form-wrapper" ng-controller="CtrlNewChangeRequest">
+                        <div class="row mg-bottom-0">
+                          <form class="col s12">
+                            <div class="row">
+                              <div class="input-field col s6">
+                                <input id="initiator_name" type="text" class="validate">
+                                <label for="initiator_name">Initiator Name</label>
+                                <span class="error-msg"> Initiator Name is required.</span>
+                              </div>
+                              <div class="input-field col s6">
+                                <input id="emp_id" type="text" class="validate">
+                                <label for="emp_id">Employee User ID (Unique)</label>
+                              </div>
+                            </div> 
+
+                            <div class="row">
+                              <div class="input-field col s6 selectbox">                               
+                                  <select class="browser-default" id="dept" ng-model="department">
+                                    <option value="" selected>Choose your option</option>
+                                    <option value="1">Option 1</option>
+                                    <option value="2">Option 2</option>
+                                    <option value="3">Option 3</option>
+                                  </select>
+                                  <span class="icon-arrow"><i class="fa fa-chevron-down"></i></span>
+                                  <label for="dept">Select Department</label>
+                                  <span class="error-msg"> Please select Department Name.</span>
+                              </div>
+                              <div class="input-field col s6 selectbox">                               
+                                  <select class="browser-default">                                    
+                                    <option value="" selected>Choose your option</option>
+                                    <option value="1">Option 1</option>
+                                    <option value="2">Option 2</option>
+                                    <option value="3">Option 3</option>
+                                  </select>
+                                  <span class="icon-arrow"><i class="fa fa-chevron-down"></i></span>
+                                  <label for="dept">Select Subdepartment</label>
+                              </div>
+                            </div>
+
+                            <div class="row">
+                              <div class="input-field col s6 datepicker" ng-controller="datePicker">
+                                <label for="inputCreated">Change Request Initiation Date</label>
+                                <input input-date
+                                    type="text"
+                                    name="created"
+                                    id="inputCreated"
+                                    ng-model="currentTime"
+                                    container="body"
+                                    format="dd/mm/yyyy"
+                                    months-full="{{ month }}"
+                                    months-short="{{ monthShort }}"
+                                    weekdays-full="{{ weekdaysFull }}"
+                                    weekdays-short="{{ weekdaysShort }}"
+                                    weekdays-letter="{{ weekdaysLetter }}"
+                                    disable="disable"
+                                    min="{{ minDate }}"
+                                    max="{{ maxDate }}"
+                                    today="today"
+                                    clear="clear"
+                                    close="close"
+                                    select-years="15"
+                                    on-start="onStart()"
+                                    on-render="onRender()"
+                                    on-open="onOpen()"
+                                    on-close="onClose()"
+                                    on-set="onSet()"
+                                    on-stop="onStop()" />
+                                    <span class="icon-calendar"><i class="fa fa-calendar"></i></span>
+                              </div>
+                              <!--<div class="col s6">                               
+                                <p class="radio-label">Change Stage</p>                               
+                                <div class="row mg-none">
+                                  <div class="col s3 pd-none">
+                                    <p>
+                                        <input class="with-gap" name="group1" type="radio" id="radio-1" checked />
+                                        <label for="radio-1">Series</label>  
+                                    </p>
+                                  </div>
+                                  <div class="col s3 pd-none">
+                                    <p>
+                                        <input class="with-gap" name="group1" type="radio" id="radio-2" />
+                                        <label for="radio-2">Development</label>  
+                                    </p>
+                                  </div>                                    
+                                </div>
+                              </div> -->
+                              <div class="input-field col s6 selectbox">
+                                  <select class="browser-default" id="Change-Stage">
+                                    <option value="" selected>Choose your option</option>
+                                    <option value="Series" selected>Series</option>
+                                    <option value="Development">Development</option>
+                                  </select>
+                                  <span class="icon-arrow"><i class="fa fa-chevron-down"></i></span>
+                                  <label for="Change-Stage">Select Change Stage</label> 
+                              </div>
+
+                            </div> 
+
+                            <div class="row">
+                              <!-- Radio Options
+                              <div class="col s6">                               
+                                <p class="radio-label">Change Type</p>                               
+                                <div class="row mg-none">
+                                  <div class="col s3 pd-none">
+                                    <p>
+                                        <input class="with-gap"  type="radio" id="radio-3" name="changeType" ng-model="changeType" value="design" checked />
+                                        <label for="radio-3">Design</label>  
+                                    </p>
+                                  </div>
+                                  <div class="col s3 pd-none">
+                                    <p>
+                                        <input class="with-gap" type="radio" id="radio-4" name="changeType" ng-model="changeType" value="process"/>
+                                        <label for="radio-4">Process</label>  
+                                    </p>
+                                  </div> 
+                                  <div class="col s3 pd-none">
+                                    <p>
+                                        <input class="with-gap" type="radio" id="radio-5" name="changeType" ng-model="changeType" value="supplier"/>
+                                        <label for="radio-5">Supplier</label>  
+                                    </p>
+                                  </div>                                    
+                                </div>
+                              </div>-->
+                              <div class="input-field col s6 selectbox">
+                                  <select class="browser-default" id="changeType" ng-model="changeType">
+                                    <option value="" selected>Choose your option</option>
+                                    <option value="design">Design</option>
+                                    <option value="process">Process</option>
+                                    <option value="supplier">Supplier</option>
+                                  </select>                                  
+                                  <span class="icon-arrow"><i class="fa fa-chevron-down"></i></span>
+                                  <label for="changeType">Select Change Type</label> 
+                              </div>
+                              <div class="input-field col s6 selectbox"  ng-show="changeType == 'design'">
+                                  <select class="browser-default" id="design">
+                                    <option value="" selected>Choose your option</option>
+                                    <option value="1">Option 1</option>
+                                    <option value="2">Option 2</option>
+                                    <option value="3">Option 3</option>
+                                  </select>
+                                  <span class="icon-arrow"><i class="fa fa-chevron-down"></i></span>
+                                  <label for="design">Select Customer Name</label> 
+                              </div>
+                              <div class="col s6"  ng-show="changeType == 'process'">
+                                <div class="multiselect-box">
+                                  <label>Customer Name</label>
+                                  <div class="selected-label">                                 
+                                    <div ng-repeat="name in selection" class="selected-item">
+                                    {{name}}
+                                    </div>
+                                    <span class="icon-arrow"><i class="fa fa-chevron-down"></i></span>
+                                  </div>
+                                  <ul>
+                                    <li ng-repeat="customer in customers">
+                                      <div class="action-checkbox">
+                                        <input id="{{customer.name}}" type="checkbox" value="{{customer.name}}" ng-checked="selection.indexOf(customer.name) > -1" ng-click="toggleSelection(customer.name)" />
+                                        <label for="{{customer.name}}">{{customer.name}}</label>
+                                      </div>
+                                    </li>
+                                  </ul>
+                                </div><!--/multiselect-box-->
+                              </div>
+
+                              <div class="col s6"  ng-show="changeType == 'supplier'">
+                                <div class="multiselect-box">
+                                 <label>Customer Name</label>
+                                  <div class="selected-label">                                 
+                                    <div ng-repeat="name in selection" class="selected-item">
+                                    {{name}}
+                                    </div>
+                                    <span class="icon-arrow"><i class="fa fa-chevron-down"></i></span>
+                                  </div>
+                                  <ul>
+                                    <li ng-repeat="customer in customers">
+                                      <div class="action-checkbox">
+                                        <input id="{{customer.name}}" type="checkbox" value="{{customer.name}}" ng-checked="selection.indexOf(customer.name) > -1" ng-click="toggleSelection(customer.name)" />
+                                        <label for="{{customer.name}}">{{customer.name}}</label>
+                                      </div>
+                                    </li>
+                                  </ul>
+                                  </div><!--/multiselect-box-->
+                              </div>
+
+                                
+                            </div>
+                            
+                            <div class="row mg-bottom-0">
+                              <div class="input-field col s6">
+                                <input id="ext-number" type="text" class="validate" ng-model="field.extNumber">
+                                <label for="ext-number">Existing Part Number</label>
+                              </div>
+                              <div class="input-field col s6">
+                                <input id="ext-name" type="text" class="validate" ng-model="field.extName">
+                                <label for="ext-name">Existing Part Name</label>
+                              </div>                              
+                            </div>
+
+                            <div class="row mg-bottom-0" ng-repeat="field in fields track by $index">
+                              <div class="input-field col s6">
+                                <input id="ext-number" type="text" class="validate" ng-model="field.extNumber">
+                                <label for="ext-number">Existing Part Number</label>
+                              </div>
+                              <div class="input-field col s6">
+                                <input id="ext-name" type="text" class="validate" ng-model="field.extName">
+                                <label for="ext-name">Existing Part Name</label>
+
+                               <span class="icon-delete" ng-click="remove($index)"><i class="fa fa-times-circle"></i></span>
+                              </div>                              
+                            </div>
+
+                            <div class="row">
+                              <div class="input-field col s12">
+                                <button class="btn waves-effect waves-light right" type="button" ng-click="add()">Add More</button>
+                              </div>
+                            </div>
+
+                             <div class="row">
+                              <!--<div class="input-field col s6 selectbox">                               
+                                  <select class="browser-default" id="change">
+                                    <option value="" selected>Choose your option</option>
+                                    <option value="1">Option 1</option>
+                                    <option value="2">Option 2</option>
+                                    <option value="3">Option 3</option>
+                                  </select>
+                                  <span class="icon-arrow"><i class="fa fa-chevron-down"></i></span>
+                                  <label for="change">Select Purpose of Change</label>
+                              </div>-->
+                              <div class="col s6 selectbox"> 
+                                <div class="multiselect-box" ng-controller="multiSelectCtrl">
+                                 <label>Select Purpose of Change</label>
+                                  <div class="selected-label">                                 
+                                    <div ng-repeat="name in selection" class="selected-item">
+                                    {{name}}
+                                    </div>
+                                    <span class="icon-arrow"><i class="fa fa-chevron-down"></i></span>
+                                  </div>
+                                  <ul>
+                                    <li ng-repeat="opt in optionList">
+                                      <div class="action-checkbox">
+                                        <input id="{{opt.name}}" type="checkbox" value="{{opt.name}}" ng-checked="selection.indexOf(opt.name) > -1" ng-click="toggleSelection(opt.name)" />
+                                        <label for="{{opt.name}}">{{opt.name}}</label>
+                                      </div>
+                                    </li>
+                                  </ul>
+                                  </div><!--/multiselect-box-->
+                              </div>
+                              <div class="input-field col s6 selectbox">                               
+                                  <select class="browser-default" id="approval">
+                                    <option value="" selected>Choose your option</option>
+                                    <option value="1">Option 1</option>
+                                    <option value="2">Option 2</option>
+                                    <option value="3">Option 3</option>
+                                  </select>
+                                  <span class="icon-arrow"><i class="fa fa-chevron-down"></i></span>
+                                  <label for="approval">Select Approval Authority from Department HOD</label>
+                              </div>
+                            </div>
+
+                           <!-- <div class="row">
+                              <div class="col s6">
+
+                                <div class="multiselect-box">
+                                  <div class="selected-label"><span>{{array}}</span></div>
+                                  <ul>
+                                    <li ng-repeat="item in list">
+                                    <label><input type="checkbox" checkbox-group class="default" />{{item.value}}</label>
+                                    </li>
+                                  </ul>
+                                </div>
+
+                              </div>
+                            </div>-->
+
+                            <div class="row">
+                              <div class="input-field col s6">
+                                <input id="plant_code" type="text" class="validate">
+                                <label for="plant_code">Plant Code</label>
+                              </div>                              
+                            </div>
+                            
+                            <div class="row">
+                              <div class="input-field col s12">
+                                <textarea id="textarea1" class="materialize-textarea"></textarea>
+                                <label for="textarea1">Purpose Modification Details</label>
+                              </div>
+                            </div>
+
+                            <div class="row">
+                              <div class="col s12 btn-group">                                
+                                <button class="btn waves-effect waves-light" type="submit" name="action">Submit</button>   
+                                <button class="btn waves-effect waves-light" type="button">Save as Draft</button>   
+                                <button class="btn waves-effect waves-light " type="reset">Clear</button>        
+                              </div>
+                            </div>
+
+                           <!-- <div class="row">
+                              <div class="col s6">
+                                <div class="form-group">
+                                    <label>Month</label>
+                                    <select id="ms" multiple="multiple">
+                                        <option value="1">January</option>
+                                        <option value="2">February</option>
+                                        <option value="3">March</option>
+                                        <option value="4">April</option>
+                                        <option value="5">May</option>
+                                        <option value="6">June</option>
+                                        <option value="7">July</option>
+                                        <option value="8">August</option>
+                                        <option value="9">September</option>
+                                        <option value="10">October</option>
+                                        <option value="11">November</option>
+                                        <option value="12">December</option>
+                                    </select>
+                                </div>
+                              </div>
+                            </div>-->
+                              
+                          </form>
+                        </div><!--/row-->
+                    </div><!--/form-wrapper-->
+
+                    
+
+                  </div><!--/content-wrapper-->
+                </div><!--/s10-->
+              </div><!--/row-->
+            
+      </div><!--/container-->
+  </div><!--/main-wrapper-->
+
+  <footer class="page-footer">
+      <div class="footer-copyright">
+        
+          <div class="container">        
+              <div class="row mg-bottom-0">
+                <div class="col s12">
+                  <a href="http://www.probitytech.com/" target="_blank"><img src="./images/probity-logo.png" alt="Probity technologies"></a>
+                  <span class="copyright right">Powered By Probity Technologies 2015</span>
+                </div>
+              </div>            
+          </div>
+        
+      </div>
+  </footer>
+
+
+
+
+    <!-- jQuery (necessary JavaScript plugins) -->
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/1.4.6/angular.min.js"></script>    
+    <script type="text/javascript" src="js/prism.min.js"></script>
+
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script type="text/javascript" src="js/materialize.min.js"></script>
+    <script type="text/javascript" src="js/angular-materialize.js"></script>
+
+    <!-- pie chart -->
+    <script type="text/javascript" src="js/Chart.min.js"></script>
+    <script type="text/javascript" src="js/angular-chart.min.js"></script>
+    <link rel="stylesheet" href="css/angular-chart.min.css">
+  
+    
+     <!-- Include App and Controller files-->
+    <script type="text/javascript" src="js/custom.js"></script>
+    <script type="text/javascript" src="js/app.js"></script>
+    <script type="text/javascript" src="js/controllers.js"></script>
+<!--
+<link rel="stylesheet" href="css/multiple-select.css" />
+<script src="js/jquery.multiple.select.js"></script>
+<script>
+    $(function() {
+        $('select').multipleSelect();
+    });
+</script>
+
+-->
+
+
+  </body>
+</html>

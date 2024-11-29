@@ -1,0 +1,149 @@
+
+  <div class="page-content row">
+    <!-- Page header -->
+    <div class="page-header">
+      <div class="page-title">
+        <h3> <?php echo $pageTitle; ?> <small><?php echo $pageNote; ?></small></h3>
+      </div>
+      <ul class="breadcrumb">
+        <li><a href="<?php echo URL::to('dashboard_admin'); ?>"><?php echo Lang::get('core.home'); ?></a></li>
+		<li><a href="<?php echo URL::to('riskassessmentcontroller?md='.$filtermd); ?>"><?php echo $pageTitle; ?></a></li>
+        <li class="active"><?php echo Lang::get('core.addedit'); ?> </li>
+      </ul>
+	  	  
+    </div>
+ 
+ 	<div class="page-content-wrapper">
+
+		<ul class="parsley-error-list">
+			<?php foreach($errors->all() as $error): ?>
+				<li><?php echo $error; ?></li>
+			<?php endforeach; ?>
+		</ul>
+<div class="sbox animated fadeInRight">
+	<div class="sbox-title"> <h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small><?php echo $pageNote; ?></small></h4></div>
+	<div class="sbox-content"> 	
+
+		 <?php echo Form::open(array('url'=>'riskassessmentcontroller/save/'.SiteHelpers::encryptID($row['risk_assessment_id']).'?md='.$filtermd.$trackUri, 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ')); ?>
+<div class="col-md-12">
+						<fieldset><legend> RiskAssessment</legend>
+									
+								  <div class="form-group hidethis " style="display:none;">
+									<label for="Risk Assessment Id" class=" control-label col-md-4 text-left"> Risk Assessment Id </label>
+									<div class="col-md-6">
+									  <?php echo Form::text('risk_assessment_id', $row['risk_assessment_id'],array('class'=>'form-control', 'placeholder'=>'',   )); ?> 
+									 </div> 
+									 <div class="col-md-2">
+									 	
+									 </div>
+								  </div> 
+
+								  <div class="form-group  " >
+									<label for="Department" class=" control-label col-md-4 text-left"> Department </label>
+									<div class="col-md-6">
+									  <select name='risk_dep' rows='5' onChange="fetch_sub_department(this.value)" id='risk_dep' code='{$risk_dep}'
+							class='select2 '    ></select> 
+									 </div> 
+									 <div class="col-md-2">
+									 	
+									 </div>
+								  </div> 					
+								  <div class="form-group  " >
+									<label for="Sub Department" class=" control-label col-md-4 text-left"> Sub Department </label>
+									<div class="col-md-6">
+									  <select name='sub_department' rows='5' id='sub_department' code='{$sub_department}' 
+							class='select2 '    ></select> 
+									 </div> 
+									 <div class="col-md-2">
+									 	
+									 </div>
+								  </div>					
+								 <!-- <div class="form-group  " >
+									<label for="Risk Dep" class=" control-label col-md-4 text-left"> Risk Dep <span class="asterix"> * </span></label>
+									<div class="col-md-6">
+									  <select name='risk_dep' rows='5' id='risk_dep' code='{$risk_dep}' 
+							class='select2 '  required  ></select> 
+									 </div> 
+									 <div class="col-md-2">
+									 	
+									 </div>
+								  </div> 					
+								  <div class="form-group  " >
+									<label for="Risk Sub Dep" class=" control-label col-md-4 text-left"> Risk Sub Dep <span class="asterix"> * </span></label>
+									<div class="col-md-6">
+									  <select name='risk_sub_dep' rows='5' id='risk_sub_dep' code='{$risk_sub_dep}' 
+							class='select2 '  required  ></select> 
+									 </div> 
+									 <div class="col-md-2">
+									 	
+									 </div>
+								  </div> 	-->				
+								  <div class="form-group  " >
+									<label for="Assessment Point" class=" control-label col-md-4 text-left"> Assessment Point <span class="asterix"> * </span></label>
+									<div class="col-md-6">
+									  <?php echo Form::text('assessment_point', $row['assessment_point'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true'  )); ?> 
+									 </div> 
+									 <div class="col-md-2">
+									 	
+									 </div>
+								  </div> </fieldset>
+			</div>
+			
+			
+			<div style="clear:both"></div>	
+				
+					
+				  <div class="form-group">
+					<label class="col-sm-4 text-right">&nbsp;</label>
+					<div class="col-sm-8">	
+					<button type="submit" name="apply" class="btn btn-info btn-sm" ><i class="fa  fa-check-circle"></i> <?php echo Lang::get('core.sb_apply'); ?></button>
+					<button type="submit" name="submit" class="btn btn-primary btn-sm" ><i class="fa  fa-save "></i> <?php echo Lang::get('core.sb_save'); ?></button>
+					<button type="button" onclick="location.href='<?php echo URL::to('riskassessmentcontroller?md='.$masterdetail["filtermd"].$trackUri); ?>' " class="btn btn-success btn-sm "><i class="fa  fa-arrow-circle-left "></i>  <?php echo Lang::get('core.sb_cancel'); ?> </button>
+					</div>	  
+			
+				  </div> 
+		 
+		 <?php echo Form::close(); ?>
+	</div>
+</div>		 
+</div>	
+</div>			 
+   <script type="text/javascript">
+	$(document).ready(function() { 
+		
+		$("#risk_dep").jCombo("<?php echo URL::to('riskassessmentcontroller/comboselect?filter=tb_departments:d_id:d_name'); ?>",
+		{  selected_value : '<?php echo $row["risk_dep"]; ?>' });
+		
+		//$("#risk_sub_dep").jCombo("<?php echo URL::to('riskassessmentcontroller/comboselect?filter=subdepartments:sub_dep_id:sub_dep_name'); ?>",
+		//{  selected_value : '<?php echo $row["risk_sub_dep"]; ?>' });-->
+
+		$("#sub_department").jCombo("<?php echo URL::to('riskassessmentcontroller/comboselect?filter=subdepartments:sub_dep_id:sub_dep_name'); ?>",
+		{  selected_value : '<?php echo $row["sub_department"]; ?>' });
+		 
+	});
+	</script>		 
+
+	<script type='text/javascript'>
+	
+
+		var base_url='<?php echo Request::root(); ?>/';
+
+		    		
+				function fetch_sub_department(value)
+				{
+
+   								$.ajax({
+   									type:"POST",
+   									cache:false,
+   									data: { dep_id: value }, 
+   									url:base_url+'riskassessmentcontroller/sub_department_ajax',
+   									
+   									success:function(response){
+   										
+   										$('#sub_department').html(response);
+   										}
+   									});
+   								
+   							
+				}//end function;
+</script>

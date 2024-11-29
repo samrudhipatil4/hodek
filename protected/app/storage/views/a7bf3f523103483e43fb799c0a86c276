@@ -1,0 +1,88 @@
+
+  <div class="page-content row">
+    <!-- Page header -->
+    <div class="page-header">
+      <div class="page-title">
+        <h3> <?php echo $pageTitle; ?> <small><?php echo $pageNote; ?></small></h3>
+      </div>
+      <ul class="breadcrumb">
+        <li><a href="<?php echo URL::to('dashboard'); ?>"><?php echo Lang::get('core.home'); ?></a></li>
+		<li><a href="<?php echo URL::to('riskassessment?md='.$filtermd); ?>"><?php echo $pageTitle; ?></a></li>
+        <li class="active"><?php echo Lang::get('core.addedit'); ?> </li>
+      </ul>
+	  	  
+    </div>
+ 
+ 	<div class="page-content-wrapper">
+
+		<ul class="parsley-error-list">
+			<?php foreach($errors->all() as $error): ?>
+				<li><?php echo $error; ?></li>
+			<?php endforeach; ?>
+		</ul>
+<div class="sbox animated fadeInRight">
+	<div class="sbox-title"> <h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small><?php echo $pageNote; ?></small></h4></div>
+	<div class="sbox-content"> 	
+
+		 <?php echo Form::open(array('url'=>'riskassessment/save/'.SiteHelpers::encryptID($row['risk_assessment_id_admin']).'?md='.$filtermd.$trackUri, 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ')); ?>
+<div class="col-md-12">
+						<fieldset><legend> RiskAssessment</legend>
+									
+								  <div class="form-group hidethis " style="display:none;">
+									<label for="Risk Assessment Id Admin" class=" control-label col-md-4 text-left"> Risk Assessment Id Admin </label>
+									<div class="col-md-6">
+									  <?php echo Form::text('risk_assessment_id_admin', $row['risk_assessment_id_admin'],array('class'=>'form-control', 'placeholder'=>'',   )); ?> 
+									 </div> 
+									 <div class="col-md-2">
+									 	
+									 </div>
+								  </div> 					
+								  <div class="form-group  " >
+									<label for="Risk Department" class=" control-label col-md-4 text-left"> Risk Department <span class="asterix"> * </span></label>
+									<div class="col-md-6">
+									  <select name='risk_department' rows='5' id='risk_department' code='{$risk_department}' 
+							class='select2 '  required  ></select> 
+									 </div> 
+									 <div class="col-md-2">
+									 	
+									 </div>
+								  </div> 					
+								  <div class="form-group  " >
+									<label for="Assessment Point Department" class=" control-label col-md-4 text-left"> Assessment Point Department <span class="asterix"> * </span></label>
+									<div class="col-md-6">
+									  <textarea name='assessment_point_department' rows='2' id='assessment_point_department' class='form-control '  
+				         required  ><?php echo $row['assessment_point_department']; ?></textarea> 
+									 </div> 
+									 <div class="col-md-2">
+									 	
+									 </div>
+								  </div> </fieldset>
+			</div>
+			
+			
+			<div style="clear:both"></div>	
+				
+					
+				  <div class="form-group">
+					<label class="col-sm-4 text-right">&nbsp;</label>
+					<div class="col-sm-8">	
+					<button type="submit" name="apply" class="btn btn-info btn-sm" ><i class="fa  fa-check-circle"></i> <?php echo Lang::get('core.sb_apply'); ?></button>
+					<button type="submit" name="submit" class="btn btn-primary btn-sm" ><i class="fa  fa-save "></i> <?php echo Lang::get('core.sb_save'); ?></button>
+					<button type="button" onclick="location.href='<?php echo URL::to('riskassessment?md='.$masterdetail["filtermd"].$trackUri); ?>' " class="btn btn-success btn-sm "><i class="fa  fa-arrow-circle-left "></i>  <?php echo Lang::get('core.sb_cancel'); ?> </button>
+					</div>	  
+			
+				  </div> 
+		 
+		 <?php echo Form::close(); ?>
+	</div>
+</div>		 
+</div>	
+</div>			 
+   <script type="text/javascript">
+	$(document).ready(function() { 
+		
+		$("#risk_department").jCombo("<?php echo URL::to('riskassessment/comboselect?filter=tb_departments:d_id:d_name'); ?>",
+		{  selected_value : '<?php echo $row["risk_department"]; ?>' });
+		 
+	});
+	</script>		 

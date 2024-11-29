@@ -1,0 +1,22 @@
+<?php
+//echo  "<pre>";
+//echo $_SERVER['SERVER_ADDR'];'<br/>';
+//echo $api_key;exit;
+if(PHP_OS=="Linux"){
+
+	exec("/sbin1/ifconfig | grep HWaddr", $output);
+	$mac=explode(' ',$output[0]);
+	$macaddress=$mac[10].$_SERVER['SERVER_ADDR'];
+
+}else if(PHP_OS=="Win"){
+	exec("ipconfig /all", $output);
+	$mac=explode(' ',$output[0]);
+	$macaddress=$mac[10].$_SERVER['SERVER_ADDR'];
+}
+
+$key= crypt($macaddress,'$5$rounds=5000$anexamplestringforsalt$');
+
+if($api_key!=$key){//echo "in validkey";
+  //  exit;
+}
+//exit;

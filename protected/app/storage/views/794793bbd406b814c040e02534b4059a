@@ -1,0 +1,82 @@
+
+  <div class="page-content row">
+    <!-- Page header -->
+    <div class="page-header">
+      <div class="page-title">
+        <h3> <?php echo $pageTitle; ?> <small><?php echo $pageNote; ?></small></h3>
+      </div>
+      <ul class="breadcrumb">
+        <li><a href="<?php echo URL::to('dashboard_admin'); ?>"><?php echo Lang::get('core.home'); ?></a></li>
+		<li><a href="<?php echo URL::to('partsinfo?md='.$filtermd); ?>"><?php echo $pageTitle; ?></a></li>
+        <li class="active"><?php echo Lang::get('core.addedit'); ?> </li>
+      </ul>
+	  	  
+    </div>
+ 
+ 	<div class="page-content-wrapper">
+
+		<ul class="parsley-error-list">
+			<?php foreach($errors->all() as $error): ?>
+				<li><?php echo $error; ?></li>
+			<?php endforeach; ?>
+		</ul>
+<div class="sbox animated fadeInRight">
+	<div class="sbox-title"> <h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small><?php echo $pageNote; ?></small></h4></div>
+	<div class="sbox-content"> 	
+
+		 <?php echo Form::open(array('url'=>'partsinfo/save/'.SiteHelpers::encryptID($row['id']).'?md='.$filtermd.$trackUri, 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ')); ?>
+<div class="col-md-12">
+						<fieldset><legend> Parts Information</legend>
+									
+								  <div class="form-group hidethis " style="display:none;">
+									<label for="Id" class=" control-label col-md-4 text-left"> Id </label>
+									<div class="col-md-6">
+									  <?php echo Form::text('id', $row['id'],array('class'=>'form-control', 'placeholder'=>'',   )); ?> 
+									 </div> 
+									 <div class="col-md-2">
+									 	
+									 </div>
+								  </div> 					
+								  <div class="form-group  " >
+									<label for="Auto Part Number" class=" control-label col-md-4 text-left"> Auto Part Number <span class="asterix"> * </span></label>
+									<div class="col-md-6">
+									  <?php echo Form::text('Auto_Part_number', $row['Auto_Part_number'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true'  )); ?> 
+									 </div> 
+									 <div class="col-md-2">
+									 	
+									 </div>
+								  </div> 					
+								  <div class="form-group  " >
+									<label for="Part Name" class=" control-label col-md-4 text-left"> Part Name <span class="asterix"> * </span></label>
+									<div class="col-md-6">
+									  <?php echo Form::text('Part_Name', $row['Part_Name'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true'  )); ?> 
+									 </div> 
+									 <div class="col-md-2">
+									 	
+									 </div>
+								  </div> </fieldset>
+			</div>
+			
+			
+			<div style="clear:both"></div>	
+				
+					
+				  <div class="form-group">
+					<label class="col-sm-4 text-right">&nbsp;</label>
+					<div class="col-sm-8">	
+					<button type="submit" name="submit" class="btn btn-primary btn-sm" ><i class="fa  fa-save "></i> <?php echo Lang::get('core.sb_save'); ?></button>
+					<button type="button" onclick="location.href='<?php echo URL::to('partsinfo?md='.$masterdetail["filtermd"].$trackUri); ?>' " class="btn btn-success btn-sm "><i class="fa  fa-arrow-circle-left "></i>  <?php echo Lang::get('core.sb_cancel'); ?> </button>
+					</div>	  
+			
+				  </div> 
+		 
+		 <?php echo Form::close(); ?>
+	</div>
+</div>		 
+</div>	
+</div>			 
+   <script type="text/javascript">
+	$(document).ready(function() { 
+		 
+	});
+	</script>		 

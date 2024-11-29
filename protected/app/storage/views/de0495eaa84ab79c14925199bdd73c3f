@@ -1,0 +1,177 @@
+
+  <div class="page-content row">
+    <!-- Page header -->
+    <div class="page-header">
+      <div class="page-title">
+        <h3> <?php echo $pageTitle; ?> <small><?php echo $pageNote; ?></small></h3>
+      </div>
+      <ul class="breadcrumb">
+        <li><a href="<?php echo URL::to('dashboard_admin'); ?>"><?php echo Lang::get('core.home'); ?></a></li>
+		<li><a href="<?php echo URL::to('SteeringCommiteeMember?md='.$filtermd); ?>"><?php echo $pageTitle; ?></a></li>
+        <li class="active"><?php echo Lang::get('core.addedit'); ?> </li>
+      </ul>
+	  	  
+    </div>
+ 
+ 	<div class="page-content-wrapper">
+
+		<ul class="parsley-error-list">
+			<?php foreach($errors->all() as $error): ?>
+				<li><?php echo $error; ?></li>
+			<?php endforeach; ?>
+		</ul>
+<div class="sbox animated fadeInRight">
+	<div class="sbox-title"> <h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small><?php echo $pageNote; ?></small></h4></div>
+	<div class="sbox-content"> 	
+
+		 <?php echo Form::open(array('url'=>'SteeringCommiteeMember/save/'.SiteHelpers::encryptID($row['id']).'?md='.$filtermd.$trackUri, 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ')); ?>
+<div class="col-md-12">
+						<fieldset><legend></legend>
+									
+								  <div class="form-group hidethis " style="display:none;">
+									<label for="Change Stage Id" class=" control-label col-md-4 text-left"> Change Stage Id </label>
+									<div class="col-md-6">
+									  <?php echo Form::text('id', $row['id'],array('class'=>'form-control', 'placeholder'=>'',   )); ?> 
+									 </div> 
+									 <div class="col-md-2">
+									 	
+									 </div>
+								  </div> 
+								   <div class="form-group  " >
+									<label for="plant" class=" control-label col-md-4 text-left"> Plant Code <span class="asterix"> * </span></label>
+									<div class="col-md-6">
+									  <select name='plant_id' rows='5' id='plant_id' code='{$plant_id}' 
+							class='select2 '  required  ></select> 
+									 </div> 
+									 <div class="col-md-2">
+									 	
+									 </div>
+								  </div> 
+								 
+								  <div class="form-group  " >
+									<label for="stakeholder" class=" control-label col-md-4 text-left"> StakeHolder <span class="asterix"> * </span></label>
+									<div class="col-md-6">
+									  <select name='stakeholder' rows='5' id='stakeholder' code='{$stakeholder}' 
+							class='select2 '  required  ></select> 
+									 </div> 
+									 <div class="col-md-2">
+									 	
+									 </div>
+								  </div>
+								  <div class="form-group  " >
+									<label for="change_stage" class=" control-label col-md-4 text-left"> Change Stage <span class="asterix"> * </span></label>
+									<div class="col-md-6">
+									  <select name='change_stage' rows='5' id='change_stage' code='{$change_stage}' 
+							class='select2 '  required  ></select> 
+									 </div> 
+									 <div class="col-md-2">
+									 	
+									 </div>
+								  </div>
+								 <div class="form-group  " >
+									<label for="department" class=" control-label col-md-4 text-left"> Steering Commitee Member <span class="asterix"> * </span></label>
+									<div class="col-md-6">
+
+
+
+								<select name='steeringComm_id[]' rows='5' multiple id='steeringComm_id'
+										required  >
+
+
+								</select>
+
+
+							</div>
+									 <div class="col-md-2">
+									 	
+									 </div>
+								  </div> 
+								  <div class="form-group  " >
+									<label for="department" class=" control-label col-md-4 text-left"> Customer Communication Decision <span class="asterix"> * </span></label>
+									<div class="col-md-6">
+
+
+
+									<select name='cust_comm_decision' rows='5'  id='cust_comm_decision'
+											required  >
+											<option value="">--Select User--</option>
+											<?php foreach ($steerComm as $row1){?>
+												<option value="<?php echo $row1['id'];?>" <?php if($row['cust_comm_decision']== $row1['id']){ echo "selected='selected'";}?>><?php echo $row1['name'];?></option>
+												<?php }?>
+									</select>
+
+
+							</div>
+									 <div class="col-md-2">
+									 	
+									 </div>
+								  </div> 	
+									  </fieldset>
+			</div>
+			
+			
+			<div style="clear:both"></div>	
+				
+					
+				  <div class="form-group">
+					<label class="col-sm-4 text-right">&nbsp;</label>
+					<div class="col-sm-8">	
+					<button type="submit" name="apply" class="btn btn-info btn-sm" ><i class="fa  fa-check-circle"></i> <?php echo Lang::get('core.sb_apply'); ?></button>
+					<button type="submit" name="submit" class="btn btn-primary btn-sm" ><i class="fa  fa-save "></i> <?php echo Lang::get('core.sb_save'); ?></button>
+					<button type="button" onclick="location.href='<?php echo URL::to('SteeringCommiteeMember?md='.$masterdetail["filtermd"].$trackUri); ?>' " class="btn btn-success btn-sm "><i class="fa  fa-arrow-circle-left "></i>  <?php echo Lang::get('core.sb_cancel'); ?> </button>
+					</div>	  
+			
+				  </div> 
+		 
+		 <?php echo Form::close(); ?>
+	</div>
+</div>		 
+</div>	
+</div>			 
+   <script type="text/javascript">
+   var base_url='<?php echo Request::root(); ?>/';
+    window.onload=fetch_group();
+	$(document).ready(function() { 
+		
+		$("#plant_id").jCombo("<?php echo URL::to('SteeringCommiteeMember/comboselect?filter=plant_code:plant_id:description'); ?>",
+		{  selected_value : '<?php echo $row["plant_id"]; ?>' });
+		 
+		 
+
+		 $("#stakeholder").jCombo("<?php echo URL::to('SteeringCommiteeMember/comboselect?filter=tb_stakeholder:id:name'); ?>",
+		{  selected_value : '<?php echo $row["stakeholder"]; ?>' });
+
+		$("#change_stage").jCombo("<?php echo URL::to('SteeringCommiteeMember/comboselect?filter=tb_change_stage:change_stage_id:stage_name'); ?>",
+		{  selected_value : '<?php echo $row["change_stage"]; ?>' });
+		  
+	});
+
+	function fetch_group()
+	{  <?php
+		if(isset($row['id']) && !empty($row['id'])){//echo"aasdhello";exit;
+
+			$id=$row['steeringComm_id'];
+
+
+
+		}else{
+
+			$id='s';
+
+		}
+		?>
+		$.ajax({
+		type:"get",
+		cache:false,
+		//data: { dep_id: value },
+		url:base_url+'SteeringCommiteeMember/get_SteeringComm/<?=$id;?>',
+
+		success:function(response){
+
+			$('#steeringComm_id').html(response);
+		}
+	});
+
+
+	}
+	</script>	

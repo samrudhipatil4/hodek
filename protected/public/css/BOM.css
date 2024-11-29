@@ -1,0 +1,279 @@
+﻿.bomBehindText
+{
+    display: inline-block;
+    vertical-align: text-top;
+    margin-top: 1px;
+    margin-left: 5px;
+    background-position: 0 -96px;
+    margin-right:10px;
+}
+.component2
+{
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    vertical-align: text-top;
+    background-image: url('../images/component2.png');
+    background-position: 16px 16px; /*  background-repeat: no-repeat;*/
+    margin-top: 1px;
+    margin-left: 5px;
+    background-position: 0 -96px;
+    margin-right:10px;
+}
+
+
+.assembly
+{
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    vertical-align: text-top;
+    background-image: url('../images/Assembly.png');
+    background-position: 16px 16px; /*  background-repeat: no-repeat;*/
+    margin-top: 1px;
+    margin-left: 5px;
+    background-position: 0 -96px;
+      margin-right:10px;
+   
+}
+
+.plussign
+{
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    vertical-align: text-top;
+    background-image: url('../images/plussign.png');
+    background-position: 16px 16px; /*  background-repeat: no-repeat;*/
+    margin-top: 1px;
+    margin-right: 2px;
+    background-position: 0 -96px;
+}
+
+.component
+{
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    vertical-align: text-top;
+    background-image: url('../images/component.gif');
+   /* background-position: 16px 16px;*/ /*  background-repeat: no-repeat;*/
+    margin-top: 1px;
+    margin-right: 2px;
+    background-position: 0 -96px;
+}
+
+.minussign
+{
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    vertical-align: text-top;
+    background-image: url('../images/minussign.png');
+    background-position: 16px 16px; /*  background-repeat: no-repeat;*/
+    margin-top: 1px;
+    margin-right: 2px;
+    background-position: 0 -96px;
+}
+
+.deleteNode
+{
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    vertical-align: text-top;
+    background-image: url('../images/Delete.png');
+    background-position: 16px 16px; /*  background-repeat: no-repeat;*/
+    margin-top: 1px;
+    margin-left: 5px;
+    background-position: 0 -96px;
+}
+
+.listArea
+{
+    min-height: 500px;
+    padding-left: 25px;
+    padding-right: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin: 2px;
+    background-color: #fbfbfb;
+    border: 1px solid #999;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+#receiptArea
+{
+    min-height: 500px;
+    padding: 1px;
+    margin-bottom: 1px;
+    background-color: #fbfbfb;
+    border: 1px solid #999;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    /*Addedd newly*/
+        max-height: 500px;
+    overflow-y: scroll;
+    overflow-x: scroll;
+    max-width: 100%;
+}
+
+.rootContainer li
+{
+    list-style-type: none;
+    margin: 0;
+    padding: 2px 2px 0 2px;
+    position: relative;
+}
+
+.rootContainer li::before, .rootContainer li::after
+{
+    content: '';
+   left:-40px;/* left: -20px;*/
+    position: absolute;
+    right: auto;
+}
+.rootContainer li::before
+{
+    /*border-left: 1px solid #999;*/
+    bottom: 50px;
+    height: 100%;
+    top: -4px;  /*change this to add line before li gap filling*/
+    width: 1px;
+  
+}
+.rootContainer li::after
+{
+    border-top: 1px solid #999;
+    height: 20px;
+    top: 15px;
+  width:41px;/*  width: 42px;*/
+    /*margin-left:-21px;*/
+   
+}
+
+.rootContainer li span
+{
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    display: inline;
+    padding: 1px 2px;
+    text-decoration: none;
+    font-size:12px !important;
+    
+    
+}
+.rootContainer li span i
+{
+    display: inline;
+    padding-right:15px;   
+}
+
+.qtytext
+{
+    margin-left: 20px;
+    font-size: small;
+    width: 90px;
+}
+
+
+.rootContainer li.parent > span
+{
+    cursor: pointer;
+}
+.rootContainer > ul > li::before, .rootContainer > ul > li::after
+{
+    border: 0;
+}
+.rootContainer li:last-child::before
+{
+    height: 30px;
+}
+.rootContainer li.parent > div:hover, .rootContainer li.parent > div:hover + ul li span
+{
+    background: #eee;
+    border: 1px solid #94a0b4;
+    color: #000;
+}
+
+.deleteUL
+{
+    display: none;
+}
+
+
+.rootContainer ul
+{
+    border-left: 1px solid gray;
+    margin-left: 25px;
+    margin-top:4px;
+  
+}
+
+.rootContainer  ul:first-child
+{
+    border:0px;
+}
+
+.rootContainer  > ul
+{
+    border:0px;
+}
+
+#Divlist
+{
+        max-height: 500px;
+    overflow-y: scroll;
+    overflow-x: scroll;
+    max-width: 100%;
+    
+    }
+
+.rootContainer ul > li > ul:last-child
+{
+   border:none;
+    }
+  
+
+  
+
+    .rootContainer ul > li > ul:last-child > li::before
+{
+    /*newly added*/
+    border-left: 1px solid #999;
+    height:20px;
+    }
+    
+  .rootContainer > ul>li>ul > li >span
+{
+     font-size:14   !important;
+    font-weight:bold;
+    }
+     .rootContainer > ul>li >span
+{
+     font-size:14px   !important;
+  
+    
+    }
+    .listArea > span
+    {
+        padding:4px;
+        margin-top:10px;
+        }
