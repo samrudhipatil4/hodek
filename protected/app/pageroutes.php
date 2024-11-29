@@ -387,6 +387,7 @@ Route::post('getCust', 'newProjectController@getCust');
 Route::post('getEnquiry', 'newProjectController@getEnquiry');
 Route::post('getPrj', 'draftProjectController@getPrj');
 Route::post('getProjectInfo', 'draftProjectController@getProjectInfo');
+Route::post('update_release_final_flag', 'draftProjectController@update_release_final_flag');
 Route::post('saveProject', 'draftProjectController@saveProject');
 Route::post('checkDate', 'draftProjectController@checkDate');
 Route::post('checkAllCondForGenDraft', 'draftProjectController@checkAllCondForGenDraft');
@@ -402,6 +403,9 @@ Route::post('calEndDate1','draftProjectController@calEndDate1');
 Route::post('calDate','draftProjectController@calDate');
 Route::post('getActivity1', 'draftProjectController@getActivity1');
 Route::post('checkHoliday', 'draftProjectController@checkDate');
+// added for complete activity button
+// Route::get('draftProjectPlan', 'draftProjectController@btnClickable')->name('draftProjectPlan');  // Add the route name
+
 Route::get('get_apqp_task','apqptaskController@get_apqp_task');
 Route::get('apqp_findmemberdep/{id}','apqptaskController@apqp_findmemberdep');
 Route::get('apqp_findmemberdep/{id}','apqptaskController@apqp_findmemberdep');

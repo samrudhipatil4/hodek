@@ -279,6 +279,36 @@ if ($userGroup && in_array('101', explode(',', $userGroup))) {
 		
 		]);
 
+	// 	$data = DB::select(DB::raw("
+	// 	SELECT * 
+	// 	FROM apqp_new_project_info AS a 
+	// 	WHERE 
+	// 		project_revision = (
+	// 			SELECT MAX(project_revision) 
+	// 			FROM apqp_new_project_info AS b 
+	// 			WHERE a.project_no = b.project_no
+	// 		)
+	// 		AND a.id NOT IN (
+	// 			SELECT project_id 
+	// 			FROM apqp_drop_project
+	// 		)
+	// 		AND a.flag = 1 
+	// 		AND a.release_flag = 0
+	// 		AND (
+	// 			a.id IN (
+	// 				SELECT project_id 
+	// 				FROM apqp_draft_project_plan 
+	// 				WHERE release_project = 0
+	// 			) 
+	// 			OR a.id NOT IN (
+	// 				SELECT project_id 
+	// 				FROM apqp_draft_project_plan
+	// 			)
+	// 		)
+	// 		AND a.project_no IN ($projectIdsString)
+	// "));
+
+	// Fetch all data using the query
 		$data = DB::select(DB::raw("
 		SELECT * 
 		FROM apqp_new_project_info AS a 
@@ -294,6 +324,7 @@ if ($userGroup && in_array('101', explode(',', $userGroup))) {
 			)
 			AND a.flag = 1 
 			AND a.release_flag = 0
+			AND a.release_final_flag = 1
 			AND (
 				a.id IN (
 					SELECT project_id 
@@ -306,7 +337,35 @@ if ($userGroup && in_array('101', explode(',', $userGroup))) {
 				)
 			)
 			AND a.project_no IN ($projectIdsString)
-	"));
+		"));
+
+		// Calculate the count of rows in `$data`
+		$totalCount = count($data);
+		\Log::info([
+			"totalCount" => $totalCount,
+		
+		]);
+		
+		// Calculate the sum of `final_flag` values that are equal to 1
+		// $finalFlagCount = array_reduce($data, function ($carry, $item) {
+		// 	return $carry + ($item->final_flag == 1 ? 1 : 0);
+		// }, 0);
+		// \Log::info([
+		// 	"finalFlagCount" => $finalFlagCount,
+		// ]);
+		
+		// // Filter the data where the count is not equal to the sum of `final_flag` values that are 1
+		// $filteredData = array_filter($data, function ($item) use ($finalFlagCount, $totalCount) {
+		// 	return $totalCount !== $finalFlagCount;
+		// });
+		
+		// // Convert filtered data back to an indexed array
+		// $filteredData = array_values($filteredData);
+		
+		// \Log::info([
+		// 	"filteredData" => $filteredData,
+		// ]);
+
 
 	// Log and debug the result
 	\Log::info(['Query Result' => $data]);
@@ -335,6 +394,45 @@ if ($userGroup && in_array('101', explode(',', $userGroup))) {
 
 		exit;
 	}
+
+	// public function btnClickable( $totalCount, $finalFlagCount){
+
+	// 	// Your logic here
+	// 	if ($totalCount == $finalFlagCount) {
+	// 		$complete_btn = true;
+	// 	} else {
+	// 		$complete_btn = false;
+	// 	}
+	
+	// 	if ($request->ajax()) {
+	// 		return response()->json([
+	// 			'complete_btn' => $complete_btn
+	// 		]);
+	// 	}
+	
+	// 	return view('your.view');
+
+	// }
+
+	// public function btnClickable(Request $request, $totalCount, $finalFlagCount) {
+	// 	$complete_btn = ($totalCount == $finalFlagCount);
+		
+	// 	// Logic to determine if the button should be enabled or not
+    //     if ($totalCount == $finalFlagCount) {
+    //         $complete_btn = true;
+    //     } else {
+    //         $complete_btn = false;
+    //     }
+
+    //     if ($request->ajax()) {
+    //         return response()->json([
+    //             'complete_btn' => $complete_btn
+    //         ]);
+    //     }
+	// 	return view('draftProjectPlan.form'); // Return view (we'll create this view next)
+	// }
+	
+	
 	public function getProjectInfo(){
 		$input = Input::all();
 		
@@ -346,19 +444,76 @@ if ($userGroup && in_array('101', explode(',', $userGroup))) {
 				->get();
 				echo json_encode($data);exit();
 	}
+
+
+	public function update_release_final_flag(){
+		$input = Input::all();
+		$proj_id = $input['proj_no'];
+		DB::table('apqp_new_project_info')			
+		->where('id',$proj_id)
+		
+		->update(array(
+				'release_final_flag' => 0
+			));
+		
+Log::info("excuted");
+		// here i have to update flag 
+
+		exit();
+
+	}
+
+
 	public function saveProject(){
 
 		$input = Input::all();
-		$user_id = Session::get('uid');
+		$main_user_id = Session::get('uid');
+		$main_proj_no = $input['proj_no'];
 		
-		if($user_id!=1){
+		$complete_btn_class = ""; 
+		$complete_btn_disabled = ""; 
+
+		\Log::info([
+			"main_proj_no" => $main_proj_no,
+		
+		]);
+		
+		if($main_user_id!=1){
+			// for HOD
 			$prjAvl = DB::table('apqp_draft_project_plan')
 			->select('apqp_draft_project_plan.*')
 			->where('project_id',$input['proj_no'])
-			->whereRaw('FIND_IN_SET(?, responsibility_owner)', [$user_id])
+			->whereRaw('FIND_IN_SET(?, responsibility_owner)', [$main_user_id])
 			->get();
-		}else{
 
+			$totalCount = count($prjAvl);
+			\Log::info([
+				"prjAvl" => $prjAvl,
+				"totalCount" => $totalCount,
+			]);
+
+			// Calculate the sum of `final_flag` values that are equal to 1
+			$finalFlagCount = array_reduce($prjAvl, function ($carry, $item) {
+				return $carry + ($item->final_flag == 1 ? 1 : 0);
+			}, 0);
+			\Log::info([
+				"finalFlagCount" => $finalFlagCount,
+			]);
+
+			// $this->btnClickable($totalCount,$finalFlagCount);
+
+			if ($totalCount == $finalFlagCount) {
+				// If true, the button is clickable and has the 'btn-primary' class
+				$complete_btn_class = 'btn btn-primary btn-sm';
+				$complete_btn_disabled = ''; // Button is clickable
+			} else {
+				// If false, the button is not clickable and has the 'btn-warning' class
+				$complete_btn_class = 'btn btn-warning btn-sm';
+				$complete_btn_disabled = 'disabled'; // Button is disabled (non-clickable)
+			}
+
+		}else{
+			// for super admin
 			$prjAvl = DB::table('apqp_draft_project_plan')
 					  ->select('apqp_draft_project_plan.*')
 					  ->where('project_id',$input['proj_no'])
@@ -366,7 +521,7 @@ if ($userGroup && in_array('101', explode(',', $userGroup))) {
 		}
 
 				  if(!empty($prjAvl)){
-			$displayStyle = ($user_id == 1) ? 'none' : 'block';
+			$displayStyle = ($main_user_id == 1) ? 'none' : 'block';
 			echo '<table style="display:' . $displayStyle . ';" align="center" border="1" width="100%" id="project_plan">
 							<tr>
 								<td>SR.NO.</td>
@@ -387,6 +542,10 @@ if ($userGroup && in_array('101', explode(',', $userGroup))) {
 							 	$premat='';
 							 	$pgate = '';
 								foreach ($prjAvl as $value) {
+									\Log::info([
+										"value" => $value,
+									
+									]);
 									$ngate = $value->gate_id;
 									if($ngate != $pgate){
 										$i2 = 1;
@@ -415,6 +574,10 @@ if ($userGroup && in_array('101', explode(',', $userGroup))) {
 								<td width="5%">'; if($value->cost != 0){ echo $value->cost;} echo '<input type="text" onkeydown="return numeric(event);" name="costperact" id="costperact'.$j.'" style="display:none;width:100px"></td>';
 
 								echo '<td width="20%" id="noUpdate'.$j.'" >';
+								// \Log::info([
+								// 	"value->finalflag" => $value->final_flag,
+								
+								// ]);
 								$user_id = explode(',', $value->responsibility);
 								
 								foreach ($user_id as $key) {
@@ -422,18 +585,53 @@ if ($userGroup && in_array('101', explode(',', $userGroup))) {
 								echo $this->getuserName($key);
 								 }
 								 echo '</td><td width="20%" id="Update'.$j.'" style="display:none">';
-								 echo "<select width='150px'   name='dept_user'  id='dept_user".$j."' rows='5'  
-							  required  >";
-							$getallDept = $this->DeptUser($value->responsibility);
+							// 	 echo "<select width='150px'   name='dept_user'  id='dept_user".$j."' rows='5'  
+							//   required  >";
+							// $getallDept = $this->DeptUser($value->responsibility);
 
-							foreach ($getallDept as $key1) {
-								echo '<option value="'.$key1->id.'"  ';foreach ($user_id as $key) { if($key1->id==$key){
-									echo 'selected';
-								} }
-									echo' >'.$key1->first_name.' '.$key1->last_name.'</option>';
+							// foreach ($getallDept as $key1) {
+							// 	echo '<option value="'.$key1->id.'"  ';foreach ($user_id as $key) { if($key1->id==$key){
+							// 		echo 'selected';
+							// 	} }
+							// 		echo' >'.$key1->first_name.' '.$key1->last_name.'</option>';
 								
 							
+							// }
+							// echo "</select>";
+							echo "<select width='150px' name='dept_user' id='dept_user" . $j . "' rows='5' required>";
+
+							// Fetch department users
+							$getallDept = $this->DeptUser($value->responsibility);
+
+							// Check the value of finalflag
+							if ($value->final_flag == 0) {
+								// Add the "Select HOD" default option for finalflag = 0
+								echo "<option value='' disabled selected>Select HOD</option>";
+
+								foreach ($getallDept as $key1) {
+									echo '<option value="' . $key1->id . '"';
+									// Check if this option is preselected
+									foreach ($user_id as $key) {
+										if ($key1->id == $key) {
+											// Do not mark as selected for finalflag = 0
+										}
+									}
+									echo '>' . $key1->first_name . ' ' . $key1->last_name . '</option>';
+								}
+							} elseif ($value->final_flag == 1) {
+								foreach ($getallDept as $key1) {
+									echo '<option value="' . $key1->id . '"';
+									// Mark as selected if the user ID matches
+									foreach ($user_id as $key) {
+										if ($key1->id == $key) {
+											echo ' selected';
+										}
+									}
+									echo '>' . $key1->first_name . ' ' . $key1->last_name . '</option>';
+								}
 							}
+
+							// Close the select dropdown
 							echo "</select>";
 								echo'</td>';
 								echo'<td width="15%" id="calNo'.$j.'">';
@@ -532,7 +730,45 @@ if ($userGroup && in_array('101', explode(',', $userGroup))) {
 								$i2++;
 								$j++;
 							 	}
+
 							 }
+							//  echo"</table>";
+							//  echo '<input type="hidden" id="main_proj_no" value="' . $main_proj_no . '">';
+							// echo '<input type="button" 
+							// 		id="completeTask" 
+							// 		style="width: 200px; height: 50px; font-size: 18px; margin-left: 40%; margin-top: 50px; padding: 15px;" 
+							// 		class="' . $complete_btn_class . '" 
+							// 		 main_proj_no="' . $main_proj_no . '" 
+							// 		' . $complete_btn_disabled . ' 
+							// 		value="Complete Task">';
+// Assuming $user_id contains the current user's ID
+if ($main_user_id != 1) {
+	\Log::info([
+		"checking main_user_id" => $main_user_id,
+	
+	]);
+    echo "</table>";
+    echo '<input type="hidden" id="main_proj_no" value="' . $main_proj_no . '">';
+    echo '<input type="button" 
+            id="completeTask" 
+            style="width: 200px; height: 50px; font-size: 18px; margin-left: 40%; margin-top: 50px; padding: 15px;" 
+            class="' . $complete_btn_class . '" 
+            main_proj_no="' . $main_proj_no . '" 
+            ' . $complete_btn_disabled . ' 
+            value="Complete Task">';
+
+			echo '<p id="reltocompleteactivity" style="display: none; color: green; margin-top: 5px; margin-left: 40%;"></p>';
+
+}
+
+	// 						 echo '<input type="hidden" id="main_proj_no" value="' . $main_proj_no . '">';
+	// 						 echo '<button id="completeTask" 
+    //     style="width: 200px; height: 50px; font-size: 18px; margin-left: 40%; margin-top:50px; padding: 15px;" 
+    //     class="' . $complete_btn_class . '" 
+    //     data-task-id="' . $main_proj_no . '" 
+    //     ' . $complete_btn_disabled . '>
+    //     Complete Task
+    // </button>';
 		}else{
 		$data=DB::table('apqp_new_project_info')
 		->leftjoin('apqp_project_gate','apqp_project_gate.project_id','=','apqp_new_project_info.project_no')
@@ -639,10 +875,11 @@ if ($userGroup && in_array('101', explode(',', $userGroup))) {
 	 	//echo '<pre>';print_r($allact);exit();
 		// populate need to check 
 		$displayStyle = ($user_id == 1) ? 'none' : 'block';
+		
 		echo '<table align="center" style="display:' . $displayStyle . ';" border="1" width="100%" id="project_plan">
 							<tr>
 								<td>SR.NO.</td>
-								<td width="5%">Gate No</td>
+								<td width="5%">Gate No1</td>
 								<td width="20%">Gate</td>
 								<td width="20%">Activity</td>
 								<td width="5%">Lead Time</td>
@@ -780,8 +1017,20 @@ if ($userGroup && in_array('101', explode(',', $userGroup))) {
 							 	
 							 }
 							 	
-					
+							 
 						echo '</table>';
+
+					
+// echo "atul"
+						// echo '<button id="coptasks" 
+						// 		style="width: 200px; height: 50px; font-size: 18px;" 
+						// 		class="' . $complete_btn_class . '" 
+						// 		' . $complete_btn_disabled . '>
+						// 		Complete Task
+						// 	</button>';
+
+
+
 
 		}
 		
@@ -1973,6 +2222,7 @@ and a.id IN(select project_id from apqp_draft_project_plan where release_project
 				->update(
 						 array(
 						 	'responsibility'	=>$input['user'],
+						 	'final_flag'	=>1,
 						 	)
 					);
 				DB::table('apqp_draft_project_plan')

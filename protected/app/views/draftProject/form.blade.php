@@ -116,6 +116,9 @@ table, th, td {
 				  </div> 
 				  <div class="form-group  " id="allActivity">
 				  </div>
+
+				  {{-- <input type="button" id="completeTask">ADDDDDD --}}
+				  {{-- <button id="completeTask" type="submit">complete task</button> --}}
 				  <div style="clear:both"><br></div>	
 				   <div class="form-group  " id="addActive"  style="display:block;">
 				
@@ -159,17 +162,17 @@ table, th, td {
 		<div class="col-sm-8" 
 		
     style="display: {{ Session::get('uid') == 1 ? 'none' : 'block' }};">
-	<button id="coptasks" 
+	{{-- <button id="coptasks" 
         style="width: 200px; height: 50px; font-size: 18px;" 
         class="btn btn-primary btn-sm">
-        complete Task
-    </button>	
-    <button name="submit" id="updateProject" 
+        Complete Task
+    </button>	 --}}
+    <button style="display: none" name="submit" id="updateProject" 
         style="width: 200px; height: 50px; font-size: 18px;" 
         class="btn btn-primary btn-sm">
         Modify Project Plan
     </button>
-    <button id="relProject" 
+    <button id="relProject" style="display: none" 
         style="width: 200px; height: 50px; font-size: 18px;" 
         class="btn btn-primary btn-sm">
         Release Project Plan
@@ -204,7 +207,95 @@ table, th, td {
 </div>		 
    <script type="text/javascript">
    var base_url='<?php echo Request::root(); ?>/';
+   $(document).on("click", "#completeTask", function() {
+	   // Use the button's attribute
+	   const button = $(this); // $(this) refers to the dynamically clicked button
+	   const mainProjNo = button.attr('main_proj_no'); // Adjusted for 'data-*' attribute
+	   var no = button.attr('main_proj_no'); // Adjusted for 'data-*' attribute
+	//    alert("I got clicked "+mainProjNo);
+    // console.log(mainProjNo); // Outputs the mainProjNo value
+
+	$.ajax({
+                   url:base_url+'update_release_final_flag',
+                    type: 'POST',
+                    data:{proj_no:no},
+                    
+                    success: function (data) {
+						 // Show the message on success
+						 $("#reltocompleteactivity")
+                .text("Project Submitted to ADMIN successfully")
+                .show();
+
+				 // Hide the allActivity element after 3 seconds
+				 setTimeout(function() {
+                $("#allActivity").hide();
+                // Reload the page after hiding the element
+                location.reload(); // This reloads the current page
+            }, 1000); // 3000 milliseconds = 3 seconds
+					}
+               
+		        });
+});
+
 $(document).ready(function() { 
+
+
+	// $("#completeTask").change(function(){
+	// 	alert("i got clicked");
+	// 	var no = $("#proj_no").val();
+	// 	const button = document.getElementById('completeTask');
+	// 	const mainProjNo = button.getAttribute('main_proj_no');
+	// 	var no = mainProjNo;
+	// 	console.log(mainProjNo); // Outputs 456
+
+	// 	// $.ajax({
+    //     //            url:base_url+'getProjectInfo',
+    //     //             type: 'POST',
+    //     //             data:{proj_no:no},
+                    
+    //     //             success: function (data) {
+    //     //             var myArray = jQuery.parseJSON(data);
+	// 	// 			       jQuery(myArray).each(function( index, element ) { 
+	// 	// 			       $.ajax({
+    //     //            		url:base_url+'checkprjSave',
+    //     //             	type: 'POST',
+    //     //             	data:{proj_no:no,},
+    //     //            		 success: function (data) {
+    //     //            			if(data.trim()== 'no'){
+	//     //                		document.getElementById('dateyes').style.display = "block";
+	//     //                		document.getElementById('dateno').style.display = "none";
+	//     //                		$("#proj_name").val(element.project_name);
+	// 	// 			       $("#mfg_loc").val(element.plant_code);
+	// 	// 			       $("#proj_StartDate").val(element.project_start_date);
+	// 	// 			       $("#proj_no1").val(element.project_no);
+	// 	// 			       $('#proj_StartDate').datepicker('setDate', element.project_start_date);
+	// 	// 			       $("#allActivity").html(""); 
+	// 	// 		                   		document.getElementById('project_rel').style.display = "none";
+	// 	// 		                   		document.getElementById('addActive').style.display = "none";
+	// 	// 			       return false;
+    //     //            			}else{
+    //     //            				document.getElementById('dateyes').style.display = "none";
+	//     //                		document.getElementById('dateno').style.display = "block";
+    //     //            				$("#proj_name").val(element.project_name);
+	// 	// 			       		$("#mfg_loc").val(element.plant_code);
+    //     //            				$("#proj_sDate").val(data);
+    //     //            				$("#proj_no1").val(element.project_no);
+    //     //            				$("#allActivity").html(""); 
+	// 	// 		                   		document.getElementById('project_rel').style.display = "none";
+	// 	// 		                   		document.getElementById('addActive').style.display = "none";
+    //     //            				return false;
+    //     //            			}
+    //     //            			}
+    //     //       		 	});    
+					       	
+					       
+					       
+	// 	// 			       });
+    //     //             }
+               
+	// 	//         });
+	// });
+
 
 
 $("#addAct").click(function(){
