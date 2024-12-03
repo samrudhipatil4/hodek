@@ -407,6 +407,8 @@ Route::post('checkHoliday', 'draftProjectController@checkDate');
 // Route::get('draftProjectPlan', 'draftProjectController@btnClickable')->name('draftProjectPlan');  // Add the route name
 
 Route::get('get_apqp_task','apqptaskController@get_apqp_task');
+Route::get('get_hod_pending_task','apqptaskController@get_hod_pending_task');
+Route::post('assignToHods','apqptaskController@assignToHods');
 Route::get('apqp_findmemberdep/{id}','apqptaskController@apqp_findmemberdep');
 Route::get('apqp_findmemberdep/{id}','apqptaskController@apqp_findmemberdep');
 Route::get('apqp/task/{id}/{id1}/{id2}/{id3}','apqptaskController@task');

@@ -8651,6 +8651,17 @@ masterApp.controller('assignedAPQPTask', ['$scope', '$http', '$uibModal', '$log'
             .get(appurl + 'get_apqp_task')
             .success(function(data, status, headers, config) {
                 $scope.assignedtaskstome = data;
+
+                // Log the full array
+                console.log("Data received:", data);
+
+                // Log each object in the array
+                data.forEach((item, index) => {
+                    console.log(`Object ${index + 1}:`, item);
+                });
+
+                // Log as a formatted JSON string
+                console.log("Formatted Data:", JSON.stringify(data, null, 2));
                 
              $("#fade").hide();
 
@@ -8727,6 +8738,150 @@ masterApp.controller('assignedAPQPTask', ['$scope', '$http', '$uibModal', '$log'
 
     }
 ])
+
+masterApp.controller('assignToHodsForm', ['$scope', '$http', function($scope, $http) {
+    $scope.assignToHods = function(projectNo, projectName, manuLocation, startDate,prj_id) {
+        // Prepare the data to send
+        const requestData = {
+            project_no: projectNo,
+            project_name: projectName,
+            manufacturing_location: manuLocation,
+            project_start_date: startDate,
+            prj_id: prj_id
+        };
+
+        console.log('runnned after click ');
+    
+        $.ajax({
+            
+            url: appurl + 'assignToHods', // Backend endpoint
+            type: 'POST', // HTTP method
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+                allData: requestData, // Data to send (array/object)
+                genproject: 'yes', // Example flag
+                projId: requestData.project_no // Project ID
+            },
+            success: function(data) {
+                // console.log(data);
+                
+                // Handle success
+                // alert('Successfully assigned to HODS');
+                console.log('Response:', data); // Check the backend response
+                // window.location.href = appurl + 'draftProjectPlan/add?md=';
+                // const newLocal = window.location.href = appurl + 'draftProjectPlan/add?md=""' + requestData.project_no + '&date=' + requestData.project_start_date;
+                window.location.href = appurl + 'draftProjectPlan/add?md=&date=' + requestData.project_start_date + '&proj_no=' + requestData.project_no + '&prj_id=' + requestData.prj_id;
+
+            },
+            error: function(xhr, status, error) {
+                // Handle error
+                alert('Failed to assign to HODS');
+                console.error('Error:', error); // Handle errors
+            }
+        });
+    };
+}]);
+
+
+masterApp.controller('pendingAPQPTask', ['$scope', '$http', '$uibModal', '$log',
+    function($scope, $http, $uibModal, $log) {
+
+ $("#fade").show();
+        $http
+            .get(appurl + 'get_hod_pending_task')
+            .success(function(data, status, headers, config) {
+                $scope.pendingProjecttaskstome = data;
+                
+                                // Log the full array
+                                console.log("pending :::: Data received:", data);
+
+                                // Log each object in the array
+                                data.forEach((item, index) => {
+                                    console.log(`Object ${index + 1}:`, item);
+                                });
+                
+                                // Log as a formatted JSON string
+                                console.log("pending ::: Formatted Data:", JSON.stringify(data, null, 2));
+
+             $("#fade").hide();
+
+                /*  Pagination Code */
+                $scope.currentPage = 1;
+                $scope.entryLimit = 20;
+                //  $scope.total = 100;
+                $scope.filteredItems = $scope.pendingProjecttaskstome.length; //Initially for no filter  
+                $scope.totalItems = $scope.pendingProjecttaskstome.length;
+            })
+
+        $scope.range = function(min, max, step) {
+            step = step || 1;
+            var input = [];
+            for (var i = min; i <= max; i += step) input.push(i);
+            return input;
+        };
+        $scope.prevPage = function() {
+
+            if ($scope.currentPage > 1) {
+                $scope.currentPage--;
+            }
+        };
+        $scope.nextPage = function() {
+            if ($scope.currentPage < $scope.pageCount()) {
+                $scope.currentPage++;
+            }
+        };
+        $scope.pageCount = function() {
+            return Math.ceil($scope.filteredItems / $scope.entryLimit);
+        };
+        $scope.setPage = function(n) {
+            if (n >= 0 && n <= $scope.pageCount()) {
+                $scope.currentPage = parseInt(n, 10);
+            }
+        };
+        $scope.filter = function() {
+            $timeout(function() {
+                $scope.filteredItems = $scope.filtered.length;
+            }, 10);
+        };
+        $scope.sort_by = function(predicate) {
+            $scope.predicate = predicate;
+            $scope.reverse = !$scope.reverse;
+        };
+        $scope.setPage = function(pageNo) {
+            $scope.currentPage = pageNo;
+        };
+
+
+        $scope.open = function(size, users) {
+
+            var modalInstance = $uibModal.open({
+                animation: $scope.animationsEnabled,
+                templateUrl: 'myModalContent.html',
+                controller: 'ModalInstanceCtrl',
+                size: size,
+                resolve: {
+                    users: function() {
+                        return users;
+                    }
+                }
+            });
+
+            modalInstance.result.then(function(selectedItem) {
+                $scope.selected = selectedItem;
+            }, function() {
+                $log.info('Modal dismissed at: ' + new Date());
+            });
+        };
+
+
+       
+
+    }
+])
+
+
 masterApp.controller('findUserName', ['$scope', '$http', '$location', '$window', '$interval',
     function($scope, $http, $location, $window, $interval) {
 

@@ -2,6 +2,29 @@
 <html>
 <head>
 
+	<?php
+	// if ($proj_no == null &&	$date == null) {
+	// 	$proj_no = "";
+	// 	$date = "";
+	// }
+
+	// Check if 'proj_no' and 'date' are set in the request (URL)
+if (!isset($proj_no)) {
+    $proj_no = null;
+}
+
+if (!isset($date)) {
+    $date = null;
+}
+if (!isset($prj_id)) {
+    $prj_id = null;
+}
+?>
+	<input type="hidden" id="hod_prj_no" name="hod_prj_no" value="<?php echo $proj_no ?>">
+    <input type="hidden" id="hod_date" name="hod_date" value="<?php echo $date ?>">
+    <input type="hidden" id="hod_prj_id" name="hod_prj_id" value="<?php echo $prj_id ?>">
+    
+
 	{{-- Check if session has 'uid' and log it --}}
 @if (Session::has('uid'))
 {{-- Output the user ID --}}
@@ -52,7 +75,7 @@ table, th, td {
 	<div class="sbox-content"> 	
 
 		 {{ Form::open(array('url'=>'draftProjectPlan/create'.'?md='.$filtermd.$trackUri, 'class'=>'form-horizontal','id' => 'proj_master')) }}
-<div class="col-md-12">
+<div class="col-md-12 prj_select_panel" id="prj_select_panel">
 						<fieldset><legend> Draft Project Plan</legend>
 									
 								  <div class="form-group hidethis " style="display:none;">
@@ -103,7 +126,7 @@ table, th, td {
 					<label class="col-sm-4 text-right">&nbsp;</label>
 					<div class="col-sm-8">	
 					
-						<button type="submit" name="submit" id="submitProject" class="btn btn-primary btn-sm">
+						<button type="submit" name="submit" id="submitProject" class="btn btn-primary btn-sm prj_select_panel">
 							<i class="fa fa-save"></i>
 							{{ Session::get('uid') == 1 ? 'Release HOD Plan' : 'Assign to HOD' }}
 						</button>
@@ -239,6 +262,117 @@ table, th, td {
 
 $(document).ready(function() { 
 
+
+
+	var proj_no = $("#hod_prj_no").val();
+    var date = $("#hod_date").val();
+    var prj_id = $("#hod_prj_id").val();
+
+	console.log(proj_no,date,prj_id);
+	
+
+	function removeLoader() {
+        $("#loader-overlay").remove();
+        $("body").css("pointer-events", "auto");
+    }
+    // If proj_no and date are available, trigger the AJAX call
+    if (proj_no && date) {
+
+		   // Hide the div with ID `prj_select_panel`
+		   $(".prj_select_panel").hide();
+        // You can trigger the same click event if the values are available
+        // $("#submitProject").click(function (evt) {
+        //     evt.preventDefault();
+
+		$("body").append('<div id="loader-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 9999; display: flex; justify-content: center; align-items: center; color: white; font-size: 20px;">Loading...</div>');
+        $("body").css("pointer-events", "none");
+
+
+            // Use the proj_no and date values from PHP
+            var no = proj_no;
+            var date = date;
+            var projId = prj_id;
+
+
+			console.log(projId+" "+no +" "+ date);
+			
+
+
+            // Validation
+            if (!no) {
+                alert('Please select project number');
+                return;
+            }
+            if (!date) {
+                alert('Please select date');
+                return;
+            }
+
+            // Start AJAX chain for submitProject
+            $.ajax({
+                url: base_url + 'checkprjSave',
+                type: 'POST',
+                data: { proj_no: no },
+                success: function (data) {
+                    if (data.trim() === 'no') {
+                        date = $("#proj_StartDate").val();
+                    } else {
+                        date = $("#proj_sDate").val();
+                    }
+
+                    $.ajax({
+                        url: base_url + 'checkDate',
+                        type: 'POST',
+                        data: { date: date },
+                        success: function (data) {
+                            if (data.trim() === 'same') {
+                                alert('Change date');
+                                return;
+                            }
+
+                            $.ajax({
+                                url: base_url + 'checkAllCondForGenDraft',
+                                type: 'POST',
+                                data: { proj_no: projId, proj_id: no },
+                                success: function (data) {
+                                    if (data.trim() === 'noact') {
+                                        alert('Common activity is not defined. Please add activity');
+                                        return;
+                                    } else if (data.trim() === 'commodity') {
+                                        alert('Component activity is not defined for component');
+                                        return;
+                                    } else if (data.trim() === 'noUser') {
+                                        alert('User is not defined for all activity. Please edit project');
+                                        $("#allActivity").html('');
+                                        return;
+                                    } else if (data.trim() === 'noclr') {
+                                        alert('Gate clearance team is not defined for all gates. Please edit project');
+                                        return;
+                                    }
+
+                                    // Save Project and then call Update Project
+                                    $.ajax({
+                                        url: base_url + 'saveProject',
+                                        type: 'POST',
+                                        data: { proj_no: projId, date: date },
+                                        success: function (data) {
+                                            $("#allActivity").html(data);
+                                            document.getElementById('project_rel').style.display = "block";
+                                            document.getElementById('addActive').style.display = "block";
+
+                                            // Call the updateProject logic
+                                            callUpdateProject(projId, date);                   						
+											removeLoader();
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        // });
+    }
 
 	// $("#completeTask").change(function(){
 	// 	alert("i got clicked");

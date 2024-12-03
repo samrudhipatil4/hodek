@@ -2,8 +2,115 @@
 unset($_SESSION['btntype']);
 class apqptaskController extends BaseController  {
 
-	//protected $layout = "layouts.main";
-	
+
+    public function assignToHods(){
+        $input = Input::all();
+
+        \Log::info([
+            "you get called" => $input,        
+        ]);
+        
+
+exit();
+    }
+
+	//protected $layout = "layouts.main";   
+	public function get_hod_pending_task(){
+        $userId = Session::get('uid');
+        \Log::info([
+            "final userId" => $userId,
+        ]);
+		
+		if($userId!=1){
+			
+			// Step 1: Fetch group_id from tb_user for the given user_id
+			$userGroup = DB::table('tb_users')
+			->where('id', $userId)
+			->pluck('group_id');
+
+	 		// // Step 1: Retrieve project_id for the given user_id
+			// $data = DB::select(DB::raw('SELECT * FROM apqp_project_dept_user WHERE user_id = :user_id'), [
+			// 	'user_id' => $userId,
+			// ]);
+			
+			// Step 2: Check if group_id contains '101'
+            if ($userGroup && in_array('101', explode(',', $userGroup))) {
+            // Step 3: Fetch data from apqp_project_dept_user
+                    $data = DB::select(DB::raw('SELECT * FROM apqp_project_dept_user WHERE user_id = :user_id'), [
+                        'user_id' => $userId,
+                    ]);
+                    // Extract project_id values into an array
+                    $projectIds = array_map(function ($item) {
+                        return $item->project_id;
+                    }, $data);
+                    
+                    // Convert to a comma-separated string with proper quoting for SQL
+                    $projectIdsString = "'" . implode("','", $projectIds) . "'";
+
+                    // Ensure $projectIds is always an array
+                    $projectIdsArray = is_array($projectIds) ? $projectIds : [$projectIds];
+
+                    \Log::info([
+                        "projectIdsArray" => $projectIdsArray,
+                    
+                    ]);
+
+
+                // Fetch all data using the query
+                    $pending_proj_data = DB::select(DB::raw("
+                    SELECT a.*, p.plant_code 
+                    FROM apqp_new_project_info AS a 
+                    LEFT JOIN 
+                    plant_code AS p 
+                    ON p.plant_id = a.mfg_location
+                    WHERE 
+                        project_revision = (
+                            SELECT MAX(project_revision) 
+                            FROM apqp_new_project_info AS b 
+                            WHERE a.project_no = b.project_no
+                        )
+                        AND a.id NOT IN (
+                            SELECT project_id 
+                            FROM apqp_drop_project
+                        )
+                        AND a.flag = 1 
+                        AND a.release_flag = 0
+                        AND a.release_final_flag = 1
+                        AND (
+                            a.id IN (
+                                SELECT project_id 
+                                FROM apqp_draft_project_plan 
+                                WHERE release_project = 0
+                            ) 
+                            OR a.id NOT IN (
+                                SELECT project_id 
+                                FROM apqp_draft_project_plan
+                            )
+                        )
+                        AND a.project_no IN ($projectIdsString)
+                    "));
+            }
+
+            \Log::info([
+                "final pending_proj_data" => $pending_proj_data,
+            
+            ]);
+            $pending_data = [];
+
+            foreach ($pending_proj_data as $key) {
+                $pending_data[] = array(
+                    'pending_project_id'         => $key->id,
+                    'pending_project_no'         => $key->project_no,
+                    'pending_project_name'       => $key->project_name,
+                    'pending_project_manulocation' => $key->plant_code,
+                    'pending_project_startdate'  => $key->project_start_date,
+                );
+            }
+            
+            return $pending_data;
+		}
+        
+    }
 	
 	public function get_apqp_task()
 	{
@@ -48,7 +155,7 @@ class apqptaskController extends BaseController  {
                             'flag' =>$key->flag
 
 		 		 		);
-		 		 }
+		 		}                 
 		 		
 
 		 		 return $data;

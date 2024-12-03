@@ -753,6 +753,36 @@ class newProjectController extends BaseController {
 			$proj_id='';
 		}
 		//$seluser= implode(",",$input['user']);
+		$user_id = $input['user'];  // The user ID (from input)
+        
+        // Fetch the current group_id for the user
+		
+		$currentGroupId = DB::table('tb_users')
+		->where('id', $user_id)
+		// ->value('group_id');
+		->pluck('group_id');
+		// ->first();  // Use first() to get the value from the result
+
+		// Check if we successfully fetched the group_id
+        if ($currentGroupId !== null) {
+            // Convert the current group_id string into an array
+            $groupIds = explode(',', $currentGroupId);
+            
+            // Check if 101 is already in the group_id array
+            if (!in_array('101', $groupIds)) {
+                // Append 101 to the array if it's not already present
+                $groupIds[] = '101';
+                
+                // Convert the array back to a comma-separated string
+                $newGroupId = implode(',', $groupIds);
+                
+                // Update the group_id in the database
+                DB::table('tb_users')
+                    ->where('id', $user_id)
+                    ->update(['group_id' => $newGroupId]);
+            }
+        } 
+		
 		
 	
 		$data =DB::table('apqp_project_dept_User')

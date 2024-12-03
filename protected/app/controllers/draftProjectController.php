@@ -83,43 +83,141 @@ class draftProjectController extends BaseController {
 	}		
 	
 
-	function getAdd( $id = null)
-	{
+// 	function getAdd( $id = null)
+// 	{
 	
-		if($id =='')
-		{
-			if($this->access['is_add'] ==0 )
-			return Redirect::to('dashboard')->with('messagetext',Lang::get('core.note_restric'))->with('msgstatus','error');
-		}	
+// 		if($id =='')
+// 		{
+// 			if($this->access['is_add'] ==0 )
+// 			return Redirect::to('dashboard')->with('messagetext',Lang::get('core.note_restric'))->with('msgstatus','error');
+// 		}	
 		
-		if($id !='')
-		{
-			if($this->access['is_edit'] ==0 )
-			return Redirect::to('dashboard')->with('messagetext',Lang::get('core.note_restric'))->with('msgstatus','error');
-		}				
+// 		if($id !='')
+// 		{
+// 			if($this->access['is_edit'] ==0 )
+// 			return Redirect::to('dashboard')->with('messagetext',Lang::get('core.note_restric'))->with('msgstatus','error');
+// 		}				
 			
-		$id = ($id == null ? '' : SiteHelpers::encryptID($id,true)) ;
+// 		$id = ($id == null ? '' : SiteHelpers::encryptID($id,true)) ;
 		
-		$row = $this->model->find($id);
-		if($row)
-		{
-			$this->data['row'] =  $row;
-		} else {
-			$this->data['row'] = $this->model->getColumnTable('apqp_draft_project_plan'); 
-		}
-		/* Master detail lock key and value */
-		if(!is_null(Input::get('md')) && Input::get('md') !='')
-		{
-			$filters = explode(" ", Input::get('md') );
-			$this->data['row'][$filters[3]] = SiteHelpers::encryptID($filters[4],true); 	
-		}
-		/* End Master detail lock key and value */
-		$this->data['masterdetail']  = $this->masterDetailParam(); 
-		$this->data['filtermd'] = str_replace(" ","+",Input::get('md')); 		
-		$this->data['id'] = $id;
+// 		$row = $this->model->find($id);
+// 		if($row)
+// 		{
+// 			$this->data['row'] =  $row;
+// 		} else {
+// 			$this->data['row'] = $this->model->getColumnTable('apqp_draft_project_plan'); 
+// 		}
+
+// //         $main_userId = Session::get('uid');
+// // if ($main_userId!=1) {
+	
+// // }
+// 		/* Master detail lock key and value */
+// 		if(!is_null(Input::get('md')) && Input::get('md') !='')
+// 		{
+// 			$filters = explode(" ", Input::get('md') );
+// 			$this->data['row'][$filters[3]] = SiteHelpers::encryptID($filters[4],true); 	
+// 		}
+// 		/* End Master detail lock key and value */
+// 		$this->data['masterdetail']  = $this->masterDetailParam(); 
+// 		$this->data['filtermd'] = str_replace(" ","+",Input::get('md')); 		
+// 		$this->data['id'] = $id;
 		
-		$this->layout->nest('content','draftProject.form',$this->data)->with('menus', $this->menus );	
+// 		$this->layout->nest('content','draftProject.form',$this->data)->with('menus', $this->menus );	
+// 	}
+
+public function getAdd($id = null)
+{
+
+	
+	// Retrieve the 'proj_no' and 'date' from the URL
+		
+	if (isset($_GET['proj_no']) && isset($_GET['date']) ) {
+		$proj_no = Input::get('proj_no');
+		$date = Input::get('date');
+		$prj_id = Input::get('prj_id');
+
+		$this->data['proj_no'] = $proj_no;
+		$this->data['date'] = $date;
+		$this->data['prj_id'] = $prj_id;
+
+		\Log::info([
+			"full data" => $this->data,
+		
+		]);
+
+		// Log the retrieved values
+		Log::info('Retrieved URL parameters', ['proj_no' => $proj_no, 'date' => $date]);
 	}
+
+
+
+    // Log the start of the method
+    Log::info('Entering getAdd method', ['id' => $id]);
+
+    if ($id == '') {
+        Log::info('ID is empty, checking add permission');
+
+        if ($this->access['is_add'] == 0) {
+            Log::warning('No add permission. Redirecting to dashboard');
+            return Redirect::to('dashboard')->with('messagetext', Lang::get('core.note_restric'))->with('msgstatus', 'error');
+        }
+    }
+
+    if ($id != '') {
+        Log::info('ID is provided, checking edit permission');
+
+        if ($this->access['is_edit'] == 0) {
+            Log::warning('No edit permission. Redirecting to dashboard');
+            return Redirect::to('dashboard')->with('messagetext', Lang::get('core.note_restric'))->with('msgstatus', 'error');
+        }
+    }
+
+    // Encrypt the ID
+    $id = ($id == null ? '' : SiteHelpers::encryptID($id, true));
+    Log::info('Encrypted ID', ['id' => $id]);
+
+    // Fetch the row data from the model
+    $row = $this->model->find($id);
+    if ($row) {
+        $this->data['row'] = $row;
+        Log::info('Data found for row', ['row' => $row]);
+    } else {
+        $this->data['row'] = $this->model->getColumnTable('apqp_draft_project_plan');
+        Log::info('No data found for row, loading default table columns');
+    }
+
+    // Handle Master Detail Lock Key and Value
+    if (!is_null(Input::get('md')) && Input::get('md') != '') {
+        Log::info('Master detail parameter found', ['md' => Input::get('md')]);
+
+        $filters = explode(" ", Input::get('md'));
+        $this->data['row'][$filters[3]] = SiteHelpers::encryptID($filters[4], true);
+        Log::info('Master detail data processed', ['filters' => $filters, 'encrypted_value' => $this->data['row'][$filters[3]]]);
+    }
+
+    // Get master details
+    $this->data['masterdetail'] = $this->masterDetailParam();
+    Log::info('Master detail parameters fetched', ['masterdetail' => $this->data['masterdetail']]);
+
+    // Handle the filtermd value
+    $this->data['filtermd'] = str_replace(" ", "+", Input::get('md'));
+    Log::info('Processed filtermd value', ['filtermd' => $this->data['filtermd']]);
+
+    // Set the ID for the data
+    $this->data['id'] = $id;
+    Log::info('Set ID in data', ['id' => $this->data['id']]);
+
+	\Log::info([
+		"maindata" => $this->data,
+	
+	]);
+
+    // Render the view
+    $this->layout->nest('content', 'draftProject.form', $this->data)->with('menus', $this->menus);
+    Log::info('Rendering view with data', ['view' => 'draftProject.form']);
+}
+
 	function postCreate( $id = null)
 	{
 		
@@ -442,6 +540,10 @@ if ($userGroup && in_array('101', explode(',', $userGroup))) {
 				->where('flag',1)
 				->where('id',$input['proj_no'])
 				->get();
+				\Log::info([
+					"master data" => $data,
+				
+				]);
 				echo json_encode($data);exit();
 	}
 
@@ -474,7 +576,7 @@ Log::info("excuted");
 		$complete_btn_disabled = ""; 
 
 		\Log::info([
-			"main_proj_no" => $main_proj_no,
+			"main_proj_no" => $input,
 		
 		]);
 		
@@ -770,6 +872,13 @@ if ($main_user_id != 1) {
     //     Complete Task
     // </button>';
 		}else{
+			\Log::info([
+				"whole input saving data" => $input,
+				
+			]);
+			// if($input['proj_no']==null||$input['proj_no']==''){
+				
+			// }
 		$data=DB::table('apqp_new_project_info')
 		->leftjoin('apqp_project_gate','apqp_project_gate.project_id','=','apqp_new_project_info.project_no')
 		->leftjoin('apqp_gate_management_master','apqp_gate_management_master.id','=','apqp_project_gate.gate_id')
@@ -778,7 +887,11 @@ if ($main_user_id != 1) {
 		->orderBy('apqp_gate_management_master.id')
 		->get();
 
+
 		foreach ($data as $allGate) {
+			\Log::info([
+				"allGate->project_no" => $allGate->project_no,
+			]);
 			$_SESSION['sesProjtNo'] = $allGate->project_no;
 			$getAllAct[]=$this->getAllAct($allGate->gate_id,$allGate->template);
 		}
@@ -874,7 +987,7 @@ if ($main_user_id != 1) {
  		// echo '<pre>';print_r($final);
 	 	//echo '<pre>';print_r($allact);exit();
 		// populate need to check 
-		$displayStyle = ($user_id == 1) ? 'none' : 'block';
+		$displayStyle = ($main_user_id == 1) ? 'none' : 'block';
 		
 		echo '<table align="center" style="display:' . $displayStyle . ';" border="1" width="100%" id="project_plan">
 							<tr>
@@ -1147,6 +1260,11 @@ if ($main_user_id != 1) {
 				return $data;
 	}
 	public function getAllAct($gate,$temp){
+		$session_project_no = $_SESSION['sesProjtNo'];
+		\Log::info([
+			"session_project_no important" => $session_project_no,
+		
+		]);
 		
 		$mat = DB::table('apqp_project_material')
 			->select('apqp_project_material.*')
@@ -1222,13 +1340,23 @@ if ($main_user_id != 1) {
 	}
 
 	public function checkAllCondForGenDraft(){
+		
 		$input = Input::all();
+		\Log::info([
+			"all input" => $input,
+			"project id" => $input['proj_id'],
+		
+		]);
 
 
 		$data= DB::table('apqp_project_gate')
 				->select('apqp_project_gate.*')
 				->where('project_id',$input['proj_id'])
 				->get();
+				\Log::info([
+					"data" => $data,
+				
+				]);
 		$temp = DB::table('apqp_new_project_info')			
 				->select('template')
 				->where('id',$input['proj_no'])
@@ -1237,6 +1365,11 @@ if ($main_user_id != 1) {
 				$Cond2='commdityAct';
 				$Cond3='userDept';
 				$Cond4= 'clrs';
+
+				\Log::info([
+					"temp" => $temp,
+				
+				]);
 		if($Cond1 == 'commAct'){
 			
 			//foreach ($data as $key){
@@ -1422,6 +1555,11 @@ and a.id IN(select project_id from apqp_draft_project_plan where release_project
 					->select('project_revision')
 					->where('id',$proj_id)
 					->get();
+
+					\Log::info([
+						"finalcheckRev" => $checkRev,
+					
+					]);
 
 	if($checkRev[0]->project_revision != 0 && isset($input['genproject'])){
 

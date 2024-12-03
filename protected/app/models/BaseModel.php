@@ -238,28 +238,38 @@ class BaseModel extends Eloquent  {
 	
 	function validAccess( $id)
 	{
-
-		$row = DB::table('tb_groups_access')->where('module_id','=', $id)
-				->where('group_id','=', Session::get('gid'))
+		$gid=Session::get('gid');
+		if (strpos($gid, '101') !== false) {
+			// '101' is found in the string
+			// Query for group_id = 101
+			$row = DB::table('tb_groups_access')
+				->where('module_id', '=', $id)
+				->where('group_id', '=', 101)
 				->get();
-		
-		if(count($row) >= 1)
-		{
-			$row = $row[0];
-			if($row->access_data !='')
-			{
-				$data = json_decode($row->access_data,true);
-			} else {
-				$data = array();
-			}	
-			return $data;		
+		}else{
 			
-		} else {
-			return false;
-		}			
-	
-	}
+			$row = DB::table('tb_groups_access')->where('module_id','=', $id)
+			->where('group_id','=', Session::get('gid'))
+			->get();
 
+}
+
+if(count($row) >= 1)
+{
+	$row = $row[0];
+	if($row->access_data !='')
+	{
+		$data = json_decode($row->access_data,true);
+	} else {
+		$data = array();
+	}	
+	return $data;		
+	
+} else {
+	return false;
+}			
+
+}
 	
 	public function getUser(){
 		$member = DB::table('tb_users')
