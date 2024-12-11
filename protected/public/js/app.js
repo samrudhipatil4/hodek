@@ -850,7 +850,6 @@ masterApp.controller('updateInitSheetCtrl', function($scope, $http, $location, $
 
 
 
-
                     }*/
 
     $scope.fill_team_member = function(d_id) {
@@ -3330,7 +3329,6 @@ masterApp.controller('changereqmodifyCtrl', function($scope, $http, $location) {
 
 
 
-
             }
 
 
@@ -5026,7 +5024,6 @@ masterApp.controller('customerComDecisionCtrl1', function($scope, $http) {
 
 
 
-
     }
 
     $scope.AddRecord = function(requestList, request, id) {
@@ -5355,7 +5352,6 @@ masterApp.controller('customerComAttachmentsCtrl_reject', function($scope, $http
                 $.simplyToast('Deleted successfully.', 'success');
 
 
-
             }).error(function(data, status, headers, config) {});
 
     }
@@ -5397,7 +5393,6 @@ masterApp.controller('customerComAttachmentsCtrl', function($scope, $http) {
 
 
     $scope.get_cust_data = function(id, custCommPer) {
-
 
 
 
@@ -5571,7 +5566,7 @@ masterApp.controller('SidebarCtrl', ['$scope', '$http', '$location', '$window', 
 masterApp.controller('DashboardCounterCtrl', ['$scope', '$http', '$location', '$window', '$interval',
         function($scope, $http, $location, $window, $interval) {
 
-            var user_id = $("#user_id").val();
+            var user_id = $("#userid").val();
 
 
 
@@ -6125,7 +6120,6 @@ masterApp.controller('ReportCtrl', ['$scope', '$http', '$location', '$window', '
 
 
 
-
     }
 ])
 
@@ -6253,7 +6247,6 @@ masterApp.controller('AdvancedsearchCtrl1', ['$scope', '$http', '$location', '$w
 
                             $scope.hideoption = 'show';
                         }
-
 
 
                         angular.copy($scope.departments, $scope.copy);
@@ -6547,7 +6540,6 @@ masterApp.controller('ApprovalpendingriskassessmentCTRL', function($scope, $http
 
 
                     });*/
-
 
 
 
@@ -6935,7 +6927,6 @@ masterApp.controller('ApprovalriskassessmentBASEDONCOSTCTRL', ['$scope', '$http'
 
 
 
-
         $scope.fetch_dep_for_approval_assessment_on_cost = function(id, user_id) {
 
 
@@ -7284,7 +7275,7 @@ $("#fade").show();
                                  location.href = appurl + 'dashboard';
                             }else{
                                 $("#fade").hide();
-                            location.href = appurl + 'dashboard';
+                                location.href = appurl + 'dashboard';
                             }
                         }else if(data[0]['inactive'].trim() == "0"){
                                     $("#fade").hide();
@@ -8783,6 +8774,61 @@ masterApp.controller('assignToHodsForm', ['$scope', '$http', function($scope, $h
         });
     };
 }]);
+masterApp.controller('superAdminApproveForm', ['$scope', '$http', function($scope, $http) {
+    $scope.superAdminApprove = function(projectNo, projectName, manuLocation, startDate,prj_id) {
+        // Prepare the data to send
+        const requestData = {
+            project_no: projectNo,
+            project_name: projectName,
+            manufacturing_location: manuLocation, 
+            project_start_date: startDate,
+            prj_id: prj_id
+        };
+
+        console.log('runnned after click ');
+    
+        $.ajax({
+            
+            url: appurl + 'assignToHods', // Backend endpoint
+            type: 'POST', // HTTP method
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+                allData: requestData, // Data to send (array/object)
+                genproject: 'yes', // Example flag
+                projId: requestData.project_no // Project ID
+            },
+            success: function(data) {
+
+                const params = new URLSearchParams({
+                    md: '',
+                    date: requestData.project_start_date,
+                    proj_no: requestData.project_no,
+                    prj_id: requestData.prj_id,
+                    project_name: requestData.project_name,
+                    manufacturing_location: requestData.manufacturing_location
+                }).toString();
+                // console.log(data);
+                
+                // Handle success
+                // alert('Successfully assigned to HODS');
+                console.log('Response:', data); // Check the backend response
+                // window.location.href = appurl + 'draftProjectPlan/add?md=';
+                // const newLocal = window.location.href = appurl + 'draftProjectPlan/add?md=""' + requestData.project_no + '&date=' + requestData.project_start_date;
+                // window.location.href = appurl + 'draftProjectPlan/add?md=&date=' + requestData.project_start_date + '&proj_no=' + requestData.project_no + '&prj_id=' + requestData.prj_id;
+                window.location.href = `${appurl}draftProjectPlan/add?${params}`;
+            },
+            error: function(xhr, status, error) {
+                // Handle error
+                alert('Failed to assign to HODS');
+                console.error('Error:', error); // Handle errors
+            }
+        });
+    };
+}]);
+
+
 
 
 masterApp.controller('pendingAPQPTask', ['$scope', '$http', '$uibModal', '$log',
@@ -8880,7 +8926,228 @@ masterApp.controller('pendingAPQPTask', ['$scope', '$http', '$uibModal', '$log',
 
     }
 ])
+masterApp.controller('SadminAPQPTask', ['$scope', '$http', function($scope, $http) {
+    $("#fade").show();
+    
+    $http.get(appurl + 'SadminAPQPTask')
+        .success(function(data, status, headers, config) {            
+            $scope.sadminpendingtaskstome = data;
+            
+            // Initialize pagination
+            $scope.currentPage = 1;
+            $scope.entryLimit = 20;
+            $scope.filteredItems = $scope.sadminpendingtaskstome.length;
+            $scope.totalItems = $scope.sadminpendingtaskstome.length;
+            
+            $("#fade").hide();
+        });
 
+    // Add pagination functions
+    $scope.range = function(min, max, step) {
+        step = step || 1;
+        var input = [];
+        for (var i = min; i <= max; i += step) input.push(i);
+        return input;
+    };
+    
+    $scope.prevPage = function() {
+        if ($scope.currentPage > 1) {
+            $scope.currentPage--;
+        }
+    };
+    
+    $scope.nextPage = function() {
+        if ($scope.currentPage < $scope.pageCount()) {
+            $scope.currentPage++;
+        }
+    };
+    
+    $scope.pageCount = function() {
+        return Math.ceil($scope.filteredItems / $scope.entryLimit);
+    };
+    
+    $scope.setPage = function(n) {
+        if (n >= 0 && n <= $scope.pageCount()) {
+            $scope.currentPage = parseInt(n, 10);
+        }
+    };
+}]);
+
+masterApp.controller('superAdminpendingForm', ['$scope', '$http', function($scope, $http) {
+    $scope.superAdminApprove = function(projectNo, projectName, mfgLocation, startDate, projectId) {
+        var requestData = {
+            project_no: projectNo,
+            project_name: projectName,
+            mfg_location: mfgLocation,
+            project_start_date: startDate,
+            project_id: projectId
+        };
+
+        $("#fade").show();
+        
+        $http.get(appurl + 'SadminAPQPTask', requestData)
+            .success(function(response) {
+                $("#fade").hide();
+                console.log('project approved');
+            })
+            .error(function(error) {
+                $("#fade").hide();
+                $.simplyToast('Error occurred while approving project.', 'error');
+                console.error('Error:', error);
+            });
+    };
+}]);
+
+
+
+
+masterApp.controller('HodStatusAPQPTask', ['$scope', '$http', '$uibModal', '$log',
+    function($scope, $http, $uibModal, $log) {
+
+ $("#fade").show();
+       
+    $http.get(appurl + 'get_hod_pending_task')
+            .success(function(data, status, headers, config) {
+                console.log('hod pending task imp', data);
+                
+                $scope.pendingProjecttaskstome = data;
+                
+                                // Log the full array
+                                console.log("pending :::: Data received2:", data);
+
+                                // Log each object in the array
+                                data.forEach((item, index) => {
+                                    console.log(`Object ${index + 1}:`, item);
+                                });
+                
+                                // Log as a formatted JSON string
+                                console.log("pending ::: Formatted Data:", JSON.stringify(data, null, 2));
+
+             $("#fade").hide();
+
+                /*  Pagination Code */
+                $scope.currentPage = 1;
+                $scope.entryLimit = 20;
+                //  $scope.total = 100;
+                $scope.filteredItems = $scope.hodstatustaskstome.length; //Initially for no filter  
+                $scope.totalItems = $scope.hodstatustaskstome.length;
+            })
+
+        $scope.range = function(min, max, step) {
+            step = step || 1;
+            var input = [];
+            for (var i = min; i <= max; i += step) input.push(i);
+            return input;
+        };
+        $scope.prevPage = function() {
+
+            if ($scope.currentPage > 1) {
+                $scope.currentPage--;
+            }
+        };
+        $scope.nextPage = function() {
+            if ($scope.currentPage < $scope.pageCount()) {
+                $scope.currentPage++;
+            }
+        };
+        $scope.pageCount = function() {
+            return Math.ceil($scope.filteredItems / $scope.entryLimit);
+        };
+        $scope.setPage = function(n) {
+            if (n >= 0 && n <= $scope.pageCount()) {
+                $scope.currentPage = parseInt(n, 10);
+            }
+        };
+        $scope.filter = function() {
+            $timeout(function() {
+                $scope.filteredItems = $scope.filtered.length;
+            }, 10);
+        };
+        $scope.sort_by = function(predicate) {
+            $scope.predicate = predicate;
+            $scope.reverse = !$scope.reverse;
+        };
+        $scope.setPage = function(pageNo) {
+            $scope.currentPage = pageNo;
+        };
+
+
+        $scope.open = function(size, users) {
+
+            var modalInstance = $uibModal.open({
+                animation: $scope.animationsEnabled,
+                templateUrl: 'myModalContent.html',
+                controller: 'ModalInstanceCtrl',
+                size: size,
+                resolve: {
+                    users: function() {
+                        return users;
+                    }
+                }
+            });
+
+            modalInstance.result.then(function(selectedItem) {
+                $scope.selected = selectedItem;
+            }, function() {
+                $log.info('Modal dismissed at: ' + new Date());
+            });
+        };
+
+
+       
+
+    }
+])
+
+// masterApp.controller('HodStatusAPQPTask', ['$scope', '$http', function($scope, $http) {
+//     $("#fade").show();
+    
+//     $http.get(appurl + 'getHodStatusAPQPTask')
+//         .success(function(data, status, headers, config) {
+//             $scope.hodstatustaskstome = data;
+
+//             console.log('hod pending task imp', data);
+            
+            
+//             // Initialize pagination
+//             $scope.currentPage = 1;
+//             $scope.entryLimit = 20;
+//             $scope.filteredItems = $scope.hodstatustaskstome.length;
+//             $scope.totalItems = $scope.hodstatustaskstome.length;
+            
+//             $("#fade").hide();
+//         });
+
+//     // Add pagination functions
+//     $scope.range = function(min, max, step) {
+//         step = step || 1;
+//         var input = [];
+//         for (var i = min; i <= max; i += step) input.push(i);
+//         return input;
+//     };
+    
+//     $scope.prevPage = function() {
+//         if ($scope.currentPage > 1) {
+//             $scope.currentPage--;
+//         }
+//     };
+    
+//     $scope.nextPage = function() {
+//         if ($scope.currentPage < $scope.pageCount()) {
+//             $scope.currentPage++;
+//         }
+//     };
+    
+//     $scope.pageCount = function() {
+//         return Math.ceil($scope.filteredItems / $scope.entryLimit);
+//     };
+    
+//     $scope.setPage = function(n) {
+//         if (n >= 0 && n <= $scope.pageCount()) {
+//             $scope.currentPage = parseInt(n, 10);
+//         }
+//     };
+// }]);
 
 masterApp.controller('findUserName', ['$scope', '$http', '$location', '$window', '$interval',
     function($scope, $http, $location, $window, $interval) {

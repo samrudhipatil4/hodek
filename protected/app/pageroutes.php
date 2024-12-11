@@ -408,6 +408,9 @@ Route::post('checkHoliday', 'draftProjectController@checkDate');
 
 Route::get('get_apqp_task','apqptaskController@get_apqp_task');
 Route::get('get_hod_pending_task','apqptaskController@get_hod_pending_task');
+Route::get('SadminAPQPTask','apqptaskController@SadminAPQPTask');
+Route::post('superAdminApprove','apqptaskController@assignToHods');
+Route::get('getHodStatusAPQPTask', 'apqptaskController@getHodStatusAPQPTask');
 Route::post('assignToHods','apqptaskController@assignToHods');
 Route::get('apqp_findmemberdep/{id}','apqptaskController@apqp_findmemberdep');
 Route::get('apqp_findmemberdep/{id}','apqptaskController@apqp_findmemberdep');

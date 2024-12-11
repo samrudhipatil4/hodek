@@ -244,6 +244,10 @@ table, th, td {
                     data:{proj_no:no},
                     
                     success: function (data) {
+
+                        // Log the proj_no to the console
+        // console.log('proj_no sent:', no);
+
 						 // Show the message on success
 						 $("#reltocompleteactivity")
                 .text("Project Submitted to ADMIN successfully")
@@ -260,12 +264,16 @@ table, th, td {
 		        });
 });
 
+
+// automatuc generate draft project plan
+
 $(document).ready(function() { 
 
 
 
 	var proj_no = $("#hod_prj_no").val();
     var date = $("#hod_date").val();
+    $("#proj_StartDate, #proj_sDate").val(date);
     var prj_id = $("#hod_prj_id").val();
 
 	console.log(proj_no,date,prj_id);
@@ -277,6 +285,8 @@ $(document).ready(function() {
     }
     // If proj_no and date are available, trigger the AJAX call
     if (proj_no && date) {
+
+        alert("i got clicked"+proj_no+" "+date);
 
 		   // Hide the div with ID `prj_select_panel`
 		   $(".prj_select_panel").hide();
@@ -290,6 +300,8 @@ $(document).ready(function() {
 
             // Use the proj_no and date values from PHP
             var no = proj_no;
+            var noname =no;
+            $("#proj_no1").val(noname);
             var date = date;
             var projId = prj_id;
 
@@ -306,6 +318,8 @@ $(document).ready(function() {
             if (!date) {
                 alert('Please select date');
                 return;
+            }else{
+                var maindate=date;
             }
 
             // Start AJAX chain for submitProject
@@ -350,11 +364,15 @@ $(document).ready(function() {
                                         return;
                                     }
 
+									console.log("during saving logged"+projId);
+									console.log("during saving logged"+maindate);
+									
+
                                     // Save Project and then call Update Project
                                     $.ajax({
                                         url: base_url + 'saveProject',
                                         type: 'POST',
-                                        data: { proj_no: projId, date: date },
+                                        data: { proj_no: projId, date: maindate },
                                         success: function (data) {
                                             $("#allActivity").html(data);
                                             document.getElementById('project_rel').style.display = "block";
@@ -511,12 +529,15 @@ $("#proj_no").change(function(){
                     	type: 'POST',
                     	data:{proj_no:no,},
                    		 success: function (data) {
+                            console.log("data is logggggginggg"+data);
+                            
                    			if(data.trim()== 'no'){
 	                   		document.getElementById('dateyes').style.display = "block";
 	                   		document.getElementById('dateno').style.display = "none";
 	                   		$("#proj_name").val(element.project_name);
 					       $("#mfg_loc").val(element.plant_code);
 					       $("#proj_StartDate").val(element.project_start_date);
+                           console.log(element.project_start_date+" ----- "+element.project_name);
 					       $("#proj_no1").val(element.project_no);
 					       $('#proj_StartDate').datepicker('setDate', element.project_start_date);
 					       $("#allActivity").html(""); 
@@ -968,6 +989,14 @@ function callUpdateProject(no, date) {
 		var k=0;
 		var date= $("#proj_StartDate").val();
 		var no = $("#proj_no").val();
+		var sec_no = $("#main_proj_no").val();	
+		var sec_date = $("#main_project_start_date").val();	
+        
+		if (no == null || no === '') {
+            no = sec_no;
+            date = sec_date;
+        }
+
 		 $("#project_plan tr:gt(0)").each(function () {
         var this_row = $(this);
          

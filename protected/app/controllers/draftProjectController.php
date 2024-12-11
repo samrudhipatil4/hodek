@@ -569,16 +569,19 @@ Log::info("excuted");
 	public function saveProject(){
 
 		$input = Input::all();
-		$main_user_id = Session::get('uid');
-		$main_proj_no = $input['proj_no'];
-		
-		$complete_btn_class = ""; 
-		$complete_btn_disabled = ""; 
-
 		\Log::info([
 			"main_proj_no" => $input,
 		
 		]);
+		$main_user_id = Session::get('uid');
+		$main_proj_no = $input['proj_no'];
+		$main_project_start_date = $input['date'];
+		// $main_project_name = $input['project_name'];
+		// $main_manufacturing_location = $input['manufacturing_location'];
+		
+		$complete_btn_class = ""; 
+		$complete_btn_disabled = ""; 
+
 		
 		if($main_user_id!=1){
 			// for HOD
@@ -615,11 +618,20 @@ Log::info("excuted");
 			}
 
 		}else{
+
+			\Log::info([
+				"input check by sachn"=>$input['proj_no'],
+			]);
 			// for super admin
 			$prjAvl = DB::table('apqp_draft_project_plan')
-					  ->select('apqp_draft_project_plan.*')
-					  ->where('project_id',$input['proj_no'])
-					  ->get();
+			->select('apqp_draft_project_plan.*')
+			->where('project_id',$input['proj_no'])
+			->get();
+			
+			\Log::info([
+				"whole project sachn"=>$prjAvl,
+			]);
+					  
 		}
 
 				  if(!empty($prjAvl)){
@@ -701,6 +713,10 @@ Log::info("excuted");
 							// }
 							// echo "</select>";
 							echo "<select width='150px' name='dept_user' id='dept_user" . $j . "' rows='5' required>";
+							// echo "<option value='' disabled selected>Select HOD</option>"; // Default option
+                            //   if (!empty($username)) {
+                            //  echo "<option value='$username' selected>$username</option>"; // Selected user
+                            //  }
 
 							// Fetch department users
 							$getallDept = $this->DeptUser($value->responsibility);
@@ -721,6 +737,7 @@ Log::info("excuted");
 									echo '>' . $key1->first_name . ' ' . $key1->last_name . '</option>';
 								}
 							} elseif ($value->final_flag == 1) {
+
 								foreach ($getallDept as $key1) {
 									echo '<option value="' . $key1->id . '"';
 									// Mark as selected if the user ID matches
@@ -757,9 +774,17 @@ Log::info("excuted");
 									echo date('d-m-Y',strtotime($value->activity_end_date));
 								
 								echo '</td>';
+
+							
 								
-								echo '<td id="updateBut'.$j.'" style="display:none"><button  name="submit" id="updateProject"  > Update</button></td><input type="hidden" id="activeId'.$j.'" style="display:none" value="'.$value->activity.'"><input type="hidden" id="prjId'.$j.'" style="display:none" value="'.$value->id.'"></tr>';
-								$i2++;
+								
+	
+							echo '<td id="updateBut'.$j.'" style="display:none"><button  name="submit" id="updateProject"  > Update</button></td><input type="hidden" id="activeId'.$j.'" style="display:none" value="'.$value->activity.'"><input type="hidden" id="prjId'.$j.'" style="display:none" value="'.$value->id.'"></tr>';
+							echo '<input type="hidden" id="main_proj_no" style="display:none" value="' . $main_proj_no . '"></tr>';
+							echo '<input type="hidden" id="main_project_start_date" style="display:none" value="' . $main_project_start_date . '"></tr>';
+							// echo '<input type="hidden" id="main_project_name" style="display:none" value="' . $main_project_name . '"></tr>';
+							// echo '<input type="hidden" id="main_manufacturing_location" style="display:none" value="' . $main_manufacturing_location . '"></tr>';
+				                $i2++;
 								$j++;
 								
 							 	}else{
@@ -789,7 +814,7 @@ Log::info("excuted");
 
 								echo '<td width="20%" id="noUpdate'.$j.'" >';
 								$user_id = explode(',', $value->responsibility);
-								
+							
 								foreach ($user_id as $key) {
 								
 								echo $this->getuserName($key);
@@ -829,6 +854,7 @@ Log::info("excuted");
 								
 								echo '<td id="updateBut'.$j.'" style="display:none"><button  name="submit" id="updateProject"  > Update</button></td>
 									<input type="hidden" id="activeId'.$j.'" style="display:none" value="'.$value->activity.'"><input type="hidden" id="prjId'.$j.'" style="display:none" value="'.$value->id.'"></tr>';
+									
 								$i2++;
 								$j++;
 							 	}
@@ -887,7 +913,10 @@ if ($main_user_id != 1) {
 		->orderBy('apqp_gate_management_master.id')
 		->get();
 
+\Log::info([
+	"nexted data" => $data,
 
+]);
 		foreach ($data as $allGate) {
 			\Log::info([
 				"allGate->project_no" => $allGate->project_no,
@@ -1542,6 +1571,10 @@ and a.id IN(select project_id from apqp_draft_project_plan where release_project
 	public function genDraftProj(){
 		$input = Input::all();
 
+		\Log::info([
+			"input full upper location"=>$input,
+		]);
+
 		if(isset($input['projId'])){
 			$proj_id=$input['projId'];
 		}else if(isset($input['allData'][0]['proj_id'])){
@@ -2071,11 +2104,18 @@ and a.id IN(select project_id from apqp_draft_project_plan where release_project
 				->where('project_id',$input['projId'])
 				->get();
 
+				\Log::info([
+					"full checkrel"=>"checkrel",
+					"checkrel"=>$checkrel,
+					"input full "=>$input,
+					"data1"=>$data1
+				]);
+
 			if(isset($input['genproject'])){
 				if(empty($data1)){
 				foreach ($input['allData'] as $key) {
 			
-			$data = DB::table('apqp_draft_project_plan')
+				$data = DB::table('apqp_draft_project_plan')
 					->insert(
 						array(
 								'project_id'  		=> $key['proj_id'],
@@ -2103,7 +2143,7 @@ and a.id IN(select project_id from apqp_draft_project_plan where release_project
 
 
 			
-			foreach ($draftdata as $key) {
+				foreach ($draftdata as $key) {
 
 					DB::table('apqp_project_material')
 					->where('project_id',$key->project_no)
@@ -2227,6 +2267,11 @@ and a.id IN(select project_id from apqp_draft_project_plan where release_project
 						}
 			}else{
 
+				\Log::info([
+					"insettingggggg "=>$data1,
+					"input full "=>$input
+				]);
+
 			// inserting else here 
 				if(!empty($data1)){
 
@@ -2346,9 +2391,6 @@ and a.id IN(select project_id from apqp_draft_project_plan where release_project
 
 	public function updateProjectDet(){
 		$input = Input::all();
-		
-				
-		
 		$data = DB::table('apqp_draft_project_plan')
 				->select('apqp_draft_project_plan.*')
 				->where('activity',$input['aid'])

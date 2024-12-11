@@ -13,7 +13,30 @@ class apqptaskController extends BaseController  {
 
 exit();
     }
+    public function SadminAPQPTask(){
+        $data =DB::select(DB::raw('select a.*,p.plant_code from apqp_new_project_info as a
+         LEFT JOIN 
+                    plant_code AS p 
+                    ON p.plant_id = a.mfg_location
+                    WHERE 
+        project_revision = (select max(project_revision) from apqp_new_project_info as b  where a.project_no=b.project_no )  and a.id NOT IN(select project_id from apqp_drop_project) and a.flag=1 AND release_flag = 1 and (a.id IN(select project_id from apqp_draft_project_plan where release_project= 0 ) or a.id  NOT IN(select project_id from apqp_draft_project_plan )) '));
+        \Log::info([
+            "data completed" => $data,
+        ]);
+        return $data;
 
+    // exit();
+    }
+
+	//protected $layout = "layouts.main";   
+	// public function get_hod_pending_task(){
+    //     $userId = Session::get('uid');
+        
+	// 		$data =DB::select(DB::raw('select * from apqp_new_project_info as a where   project_revision = (select max(project_revision) from apqp_new_project_info as b  where a.project_no=b.project_no )  and a.id NOT IN(select project_id from apqp_drop_project) and a.flag=1 AND release_flag = 1 and (a.id IN(select project_id from apqp_draft_project_plan where release_project= 0 ) or a.id  NOT IN(select project_id from apqp_draft_project_plan )) '));
+
+    //         return $data;
+        
+    // }
 	//protected $layout = "layouts.main";   
 	public function get_hod_pending_task(){
         $userId = Session::get('uid');
@@ -93,8 +116,9 @@ exit();
 
             \Log::info([
                 "final pending_proj_data" => $pending_proj_data,
+              ]);
+
             
-            ]);
             $pending_data = [];
 
             foreach ($pending_proj_data as $key) {
@@ -108,10 +132,62 @@ exit();
             }
             
             return $pending_data;
-		}
+		}else{
+            // super admin
+            $pending_proj_data = DB::select(DB::raw("
+                    SELECT a.*, p.plant_code 
+                    FROM apqp_new_project_info AS a 
+                    LEFT JOIN 
+                    plant_code AS p 
+                    ON p.plant_id = a.mfg_location
+                    WHERE 
+                        project_revision = (
+                            SELECT MAX(project_revision) 
+                            FROM apqp_new_project_info AS b 
+                            WHERE a.project_no = b.project_no
+                        )
+                        AND a.id NOT IN (
+                            SELECT project_id 
+                            FROM apqp_drop_project
+                        )
+                        AND a.flag = 1 
+                        AND a.release_flag = 0
+                        AND a.release_final_flag = 1
+                        AND (
+                            a.id IN (
+                                SELECT project_id 
+                                FROM apqp_draft_project_plan 
+                                WHERE release_project = 0
+                            ) 
+                            OR a.id NOT IN (
+                                SELECT project_id 
+                                FROM apqp_draft_project_plan
+                            )
+                        )
+                "));
+        
+                // Log the final data
+                \Log::info([
+                    "final from super admin pending_proj_data" => $pending_proj_data,
+                ]);
+        
+                // Prepare the pending data for response
+                $pending_data = [];
+                foreach ($pending_proj_data as $key) {
+                    $pending_data[] = array(
+                        'pending_project_id' => $key->id,
+                        'pending_project_no' => $key->project_no,
+                        'pending_project_name' => $key->project_name,
+                        'pending_project_manulocation' => $key->plant_code, 
+                        'pending_project_startdate' => $key->project_start_date,
+                    );
+                }
+                return $pending_data;
+        }
         
     }
-	
+
+
 	public function get_apqp_task()
 	{
 		 $query = DB::table('apqp_all_task')
@@ -902,4 +978,72 @@ exit();
     	}
             exit();
 	}
-}	
+
+    public function getHodStatusAPQPTask() {
+
+      
+            $userId = Session::get('uid');
+            \Log::info([
+                "final userId" => $userId,
+            ]);
+        
+            if ($userId == 1) {
+                // Query specifically for userId == 1
+                
+        
+            }
+            
+            return $pending_data;
+            // Return an empty array if userId is not 1
+            // return [];
+        }
+    }
+
+                
+       
+//         $data = DB::select(DB::raw("
+//             SELECT a.*, p.plant_code 
+//             FROM apqp_new_project_info AS a 
+//             LEFT JOIN plant_code AS p ON p.plant_id = a.mfg_location
+//             WHERE 
+//                 project_revision = (
+//                     SELECT MAX(project_revision) 
+//                     FROM apqp_new_project_info AS b 
+//                     WHERE a.project_no = b.project_no
+//                 )
+//                 AND a.id NOT IN (
+//                     SELECT project_id 
+//                     FROM apqp_drop_project
+//                 )
+//                 AND a.flag = 1 
+//                 AND a.release_flag = 1
+//                 AND (
+//                     a.id IN (
+//                         SELECT project_id 
+//                         FROM apqp_draft_project_plan 
+//                         WHERE release_project = 0
+//                     ) 
+//                     OR a.id NOT IN (
+//                         SELECT project_id 
+//                         FROM apqp_draft_project_plan
+//                     )
+//                 )
+//         "));
+       
+
+//         $pending_data = [];
+        
+//         foreach ($data as $key) {
+//             $pending_data[] = array(
+//                 'pending_project_id' => $key->id,
+//                 'pending_project_no' => $key->project_no,
+//                 'pending_project_name' => $key->project_name,
+//                 'pending_project_manulocation' => $key->plant_code,
+//                 'pending_project_startdate' => $key->project_start_date,
+//             );
+//         }
+
+//         return $pending_data;
+//     }
+// }	
+

@@ -119,12 +119,12 @@
                                     </thead>
 
                                     <tbody>
+                                    <!-- <tr ng-repeat="pendingProjecttask in filtered = (pendingProjecttaskstome | filter:search | orderBy: '-pending_project_id') | startFrom:(currentPage - 1) * entryLimit | limitTo:entryLimit"> -->
                                     <tr ng-repeat="pendingProjecttask in filtered = (pendingProjecttaskstome| filter:search | orderBy : sortType:sortReverse) | startFrom:(currentPage - 1) * entryLimit | limitTo:entryLimit">
-                                        <!--<tr ng-repeat="assignedTask in filtered = (assignedtaskstome| filter:search | orderBy : sortType:sortReverse) | startFrom:(currentPage - 1) * entryLimit | limitTo:entryLimit">-->
-                                        <td><span ng-bind="$index+1"></span>.</td>
-                                        <td>
+                                       <!--<tr ng-repeat="assignedTask in filtered = (assignedtaskstome| filter:search | orderBy : sortType:sortReverse) | startFrom:(currentPage - 1) * entryLimit | limitTo:entryLimit">-->
+                                       <!-- <td> <span ng-bind="filtered.length - $index"></span>.   </td> -->
+                                       <td><span ng-bind="$index+1"></span>.</td>
                                             <span ng-bind="pendingProjecttask.pending_project_id" style="display:none;"></span>
-                                        </td>
                                         <td>
                                             <span  ng-bind="pendingProjecttask.pending_project_no"></span>
                                         </td>
@@ -139,19 +139,19 @@
                                                     <td>
 
                                                     <form ng-controller="assignToHodsForm" action="javascript:void(0);" method="post">
-                        <button 
-                            type="button" 
-                            style="background-color: #007bff; color: white; border: none; padding: 8px 12px; cursor: pointer; border-radius: 4px;"
-                            ng-click="assignToHods(
-                                pendingProjecttask.pending_project_no, 
-                                pendingProjecttask.pending_project_name, 
-                                pendingProjecttask.pending_project_manulocation, 
-                                pendingProjecttask.pending_project_startdate,
-                                pendingProjecttask.pending_project_id
-                            )">
-                            Assign to HODS
-                        </button>
-                    </form>
+                                                        <button 
+                                                            type="button" 
+                                                            style="background-color: #007bff; color: white; border: none; padding: 8px 12px; cursor: pointer; border-radius: 4px;"
+                                                            ng-click="assignToHods(
+                                                                pendingProjecttask.pending_project_no, 
+                                                                pendingProjecttask.pending_project_name, 
+                                                                pendingProjecttask.pending_project_manulocation, 
+                                                                pendingProjecttask.pending_project_startdate,
+                                                                pendingProjecttask.pending_project_id
+                                                            )">
+                                                            Assign to HODS
+                                                        </button>
+                                                    </form>
                                                         
                               
                            
@@ -162,7 +162,7 @@
                                             </table>
                                         </td>
                                     </tr>
-
+                                    
                                 </table>
 
                             </div><!--/table-wrapper-->
@@ -172,8 +172,6 @@
                 </div>
             </div>
         </div>
-
-        <?php endif; ?>
 
 
         <!--// Assigned Task to Me-->
@@ -309,7 +307,278 @@
                 </div>
             </div>
         </div>
+        <?php endif; ?>
 
+
+        <?php if ($main_user_id == 1): ?>
+
+            <div class="row" ng-cloak="">
+                <div class="col-sm-12">
+                    <div ng-controller="SadminAPQPTask" class="">
+
+                        <uib-accordion close-others="oneAtATime" ng-cloak>
+
+                            <uib-accordion-group ng-init="status.open=true" is-open="status.open">
+                                <uib-accordion-heading>
+                                Release Project To HOD  <span class="records pull-right"><span ng-bind="sadminpendingtaskstome.length"> </span> Records <i class="pull-right glyphicon" ng-class="{'glyphicon-triangle-top': status.open, 'glyphicon-triangle-bottom': !status.open}"></i></span>
+                                </uib-accordion-heading>
+                                <div class="collapsible-body">
+                                    <div class="toolbar">
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <div class="pagination-wrapper">
+                                                    <ul class="no-lft">
+                                                        <li>Page
+                                                            <ul class="pagination">
+                                                                <li class=""><a href="javascript:void(0)" ng-click="prevPage()"><i class="fa fa-angle-left"></i></a></li>
+                                                                <li class="active">
+                                                                    <div class="select-box">
+                                                                        <select class="form-control" ng-model='currentPage' ng-change="setPage(currentPage)">
+                                                                            <option ng-repeat="n in range(1,pageCount())" value="<%n%>" ng-selected="n === currentPage"><%n%></option>
+                                                                        </select>
+                                                                    </div>
+                                                                </li>
+                                                                <li class=""><a href="javascript:void(0)" ng-click="nextPage()"><i class="fa fa-angle-right"></i></a></li>
+                                                            </ul>
+                                                        </li>
+                                                        <li>
+
+                                                            <ul>
+                                                                <li> View </li>
+                                                                <li>
+                                                                    <div class="select-box">
+
+
+
+                                                                        <select ng-model="entryLimit" class="form-control">
+
+                                                                            <option>5</option>
+                                                                            <option>10</option>
+                                                                            <option>20</option>
+                                                                            <option>50</option>
+                                                                            <option>100</option>
+                                                                        </select>
+
+                                                                    </div>
+                                                                </li>
+                                                                <li>per page</li>
+                                                            </ul>
+                                                        </li>
+                                                        <li>
+                                                            Total <span ng-bind="filtered.length"> </span> records found
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <form>
+                                                    <div class="search-form">
+                                                        <input type="text" class="input-search" Placeholder="Refine your results" ng-model="search">
+
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-wrapper">
+                                    <table class="striped">
+                                        <thead>
+                                        <tr>
+                                            <th>Sr. No.</th>
+                                            <th><a href="javascript:void(0)" ng-click="sortType = 'change_type_name'; sortReverse = !sortReverse" class="datasort">Project Number  <i class="fa fa-arrows-v"></i></a></th>
+                                            <th><a href="javascript:void(0)" ng-click="sortType = 'created_date'; sortReverse = !sortReverse" class="datasort">Project Name <i class="fa fa-arrows-v"></i></a></th>
+                                            <th><a href="javascript:void(0)" ng-click="sortType = 'created_date'; sortReverse = !sortReverse" class="datasort">Manufacturing Location <i class="fa fa-arrows-v"></i></a></th>
+                                            <th><a href="javascript:void(0)" ng-click="sortType = 'initiator_name'; sortReverse = !sortReverse" class="datasort">Start Date<i class="fa fa-arrows-v"></i></a></th>
+                                            <!-- <th><a href="javascript:void(0)" ng-click="sortType = 'FirstName'; sortReverse = !sortReverse" class="datasort"> <i class="fa fa-arrows-v"></i></a></th>
+                                            <th><a href="javascript:void(0)" ng-click="sortType = 'initiator_name'; sortReverse = !sortReverse" class="datasort">Planned Activity End Date <i class="fa fa-arrows-v"></i></a></th> -->
+                                            
+                                            
+                                            <th>Action</th>
+                                        </tr>
+                                        </thead>
+
+                                        <tbody>
+                                        <tr ng-repeat="sadminpendingtask in filtered = (sadminpendingtaskstome| filter:search | orderBy : sortType:sortReverse) | startFrom:(currentPage - 1) * entryLimit | limitTo:entryLimit">
+                                            <td><span ng-bind="$index+1"></span>.</td>
+                                            <td>
+                                                <span ng-bind="sadminpendingtask.project_no"></span>
+                                            </td>
+                                            <td><span ng-bind="sadminpendingtask.project_name"></span></td>
+                                            <td><span ng-bind="sadminpendingtask.plant_code"></span></td>
+                                            <td><span ng-bind="sadminpendingtask.project_start_date"></span></td>
+                                            <td>
+                                                <table class="actions">
+                                                    <tr>
+                                                        <td>
+                                                            <form ng-controller="superAdminApproveForm" action="javascript:void(0);" method="post">
+                                                                <button 
+                                                                    type="button" 
+                                                                    style="background-color: #007bff; color: white; border: none; padding: 8px 12px; cursor: pointer; border-radius: 4px;"
+                                                                    ng-click="superAdminApprove(
+                                                                        sadminpendingtask.project_no, 
+                                                                        sadminpendingtask.project_name, 
+                                                                        sadminpendingtask.plant_code, 
+                                                                        sadminpendingtask.project_start_date,
+                                                                        sadminpendingtask.id
+                                                                    )">
+                                                                    Release Project To HOD
+                                                                </button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+
+                                    </table>
+
+                                </div><!--/table-wrapper-->
+
+                            </uib-accordion-group>
+                        </uib-accordion>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" ng-cloak="">
+                <div class="col-sm-12">
+                    <div ng-controller="HodStatusAPQPTask" class="">
+
+                        <uib-accordion close-others="oneAtATime" ng-cloak>
+
+                            <uib-accordion-group ng-init="status.open=true" is-open="status.open">
+                                <uib-accordion-heading>
+                                HOD Task Status  <span class="records pull-right"><span ng-bind="hodstatustaskstome.length"> </span> Records <i class="pull-right glyphicon" ng-class="{'glyphicon-triangle-top': status.open, 'glyphicon-triangle-bottom': !status.open}"></i></span>
+                                </uib-accordion-heading>
+                                <div class="collapsible-body">
+                                    <div class="toolbar">
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <div class="pagination-wrapper">
+                                                    <ul class="no-lft">
+                                                        <li>Page
+                                                            <ul class="pagination">
+                                                                <li class=""><a href="javascript:void(0)" ng-click="prevPage()"><i class="fa fa-angle-left"></i></a></li>
+                                                                <li class="active">
+                                                                    <div class="select-box">
+                                                                        <select class="form-control" ng-model='currentPage' ng-change="setPage(currentPage)">
+                                                                            <option ng-repeat="n in range(1,pageCount())" value="<%n%>" ng-selected="n === currentPage"><%n%></option>
+                                                                        </select>
+                                                                    </div>
+                                                                </li>
+                                                                <li class=""><a href="javascript:void(0)" ng-click="nextPage()"><i class="fa fa-angle-right"></i></a></li>
+                                                            </ul>
+                                                        </li>
+                                                        <li>
+
+                                                            <ul>
+                                                                <li> View </li>
+                                                                <li>
+                                                                    <div class="select-box">
+
+
+
+                                                                        <select ng-model="entryLimit" class="form-control">
+
+                                                                            <option>5</option>
+                                                                            <option>10</option>
+                                                                            <option>20</option>
+                                                                            <option>50</option>
+                                                                            <option>100</option>
+                                                                        </select>
+
+                                                                    </div>
+                                                                </li>
+                                                                <li>per page</li>
+                                                            </ul>
+                                                        </li>
+                                                        <li>
+                                                            Total <span ng-bind="filtered.length"> </span> records found
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <form>
+                                                    <div class="search-form">
+                                                        <input type="text" class="input-search" Placeholder="Refine your results" ng-model="search">
+
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-wrapper">
+                                <table class="striped">
+                                    <thead>
+                                    <tr>
+                                        <th>Sr. No.</th>
+                                        <th><a href="javascript:void(0)" ng-click="sortType = 'change_type_name'; sortReverse = !sortReverse" class="datasort">Project Number  <i class="fa fa-arrows-v"></i></a></th>
+                                        <th><a href="javascript:void(0)" ng-click="sortType = 'created_date'; sortReverse = !sortReverse" class="datasort">Project Name <i class="fa fa-arrows-v"></i></a></th>
+                                         <th><a href="javascript:void(0)" ng-click="sortType = 'created_date'; sortReverse = !sortReverse" class="datasort">manufacturing location <i class="fa fa-arrows-v"></i></a></th>
+                                        <th><a href="javascript:void(0)" ng-click="sortType = 'initiator_name'; sortReverse = !sortReverse" class="datasort">Project Start Date<i class="fa fa-arrows-v"></i></a></th>                                        
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+
+                                    <tbody>
+                                    <!-- <tr ng-repeat="pendingProjecttask in filtered = (pendingProjecttaskstome | filter:search | orderBy: '-pending_project_id') | startFrom:(currentPage - 1) * entryLimit | limitTo:entryLimit"> -->
+                                    <tr ng-repeat="pendingProjecttask in filtered = (pendingProjecttaskstome| filter:search | orderBy : sortType:sortReverse) | startFrom:(currentPage - 1) * entryLimit | limitTo:entryLimit">
+                                       <!--<tr ng-repeat="assignedTask in filtered = (assignedtaskstome| filter:search | orderBy : sortType:sortReverse) | startFrom:(currentPage - 1) * entryLimit | limitTo:entryLimit">-->
+                                       <!-- <td> <span ng-bind="filtered.length - $index"></span>.   </td> -->
+                                       <td><span ng-bind="$index+1"></span>.</td>
+                                            <span ng-bind="pendingProjecttask.pending_project_id" style="display:none;"></span>
+                                        <td>
+                                            <span  ng-bind="pendingProjecttask.pending_project_no"></span>
+                                        </td>
+                                        <td><span ng-bind="pendingProjecttask.pending_project_name"></span></td>
+                                           <td><span ng-bind="pendingProjecttask.pending_project_manulocation"></span></td>
+                                        <td ><span ng-bind="pendingProjecttask.pending_project_startdate"></span></td>
+                                        </td>
+                                        <td>
+                                            <table class="actions" >
+                                                <tr>
+                                                    
+                                                    <td>
+
+                                                    <form ng-controller="assignToHodsForm" action="javascript:void(0);" method="post">
+                                                        <button 
+                                                            type="button" 
+                                                            style="background-color: #007bff; color: white; border: none; padding: 8px 12px; cursor: pointer; border-radius: 4px;"
+                                                            ng-click="assignToHods(
+                                                                pendingProjecttask.pending_project_no, 
+                                                                pendingProjecttask.pending_project_name, 
+                                                                pendingProjecttask.pending_project_manulocation, 
+                                                                pendingProjecttask.pending_project_startdate,
+                                                                pendingProjecttask.pending_project_id
+                                                            )">
+                                                            Assign to HODS
+                                                        </button>
+                                                    </form>
+                                                        
+                              
+                           
+                                                    </td>
+
+                                                </tr>
+
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    
+                                </table>
+
+                                </div><!--/table-wrapper-->
+
+                            </uib-accordion-group>
+                        </uib-accordion>
+                    </div>
+                </div>
+            </div>
+
+        <?php endif; ?>
 
 
 
@@ -351,7 +620,7 @@
                             <td>Mobile No.</td>
                             <td><%users.mobile_no%></td>
                         </tr>
-
+                       
                         </tbody>
                     </table>
                 </div>
@@ -408,7 +677,7 @@ $(document).ready(function () {
 });
 
 </script>
-<!--
+
 <script type="text/javascript">
     $(function(){
 
@@ -456,4 +725,4 @@ $(document).ready(function () {
     });
 
 
-</script>-->
+</script>

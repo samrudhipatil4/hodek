@@ -177,12 +177,19 @@ margin-bottom: 70px;">
 </div>							
 <br>
 	<div class="row">
-			<div class="col-md-12">
+			{{-- <div class="col-md-12">
 				<label for="Change Type Name" class=" control-label col-md-2 text-left" > Part Number<span class="asterix"> * </span></label>
 				<div class="col-md-4">
 				 {{ Form::text('part_no', '', array('id' => 'part_no','class' => 'form-control','required'=>'true','data-parsley-group'=>'first' ,'autocomplete'=>'off'))}}
-				</div>
+				</div> --}}
 
+				<div class="col-md-12">
+					<label for="Change Type Name" class="control-label col-md-2 text-left">Part Number<span class="asterix"> *</span></label>
+					<div class="col-md-4">
+						{{ Form::text('part_no', '', array('id' => 'part_no', 'class' => 'form-control', 'data-parsley-group' => 'first', 'autocomplete' => 'off')) }}
+					</div>
+				
+				
 				<label for="Change Type Name" class=" control-label col-md-2 text-left" >Customer Part Number<span class="asterix"> * </span></label>
 				<div class="col-md-4">
 				 {{ Form::text('cust_part_no', '', array('id' => 'cust_part_no','class' => 'form-control','required'=>'true','data-parsley-group'=>'first' ,'autocomplete'=>'off'))}}
