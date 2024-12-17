@@ -8738,7 +8738,8 @@ masterApp.controller('assignToHodsForm', ['$scope', '$http', function($scope, $h
             project_name: projectName,
             manufacturing_location: manuLocation,
             project_start_date: startDate,
-            prj_id: prj_id
+            prj_id: prj_id,
+            display:"show"
         };
 
         console.log('runnned after click ');
@@ -8763,7 +8764,9 @@ masterApp.controller('assignToHodsForm', ['$scope', '$http', function($scope, $h
                 console.log('Response:', data); // Check the backend response
                 // window.location.href = appurl + 'draftProjectPlan/add?md=';
                 // const newLocal = window.location.href = appurl + 'draftProjectPlan/add?md=""' + requestData.project_no + '&date=' + requestData.project_start_date;
-                window.location.href = appurl + 'draftProjectPlan/add?md=&date=' + requestData.project_start_date + '&proj_no=' + requestData.project_no + '&prj_id=' + requestData.prj_id;
+                // console.log("url : "+appurl + 'draftProjectPlan/0add?md=&date=' + requestData.project_start_date + '&proj_no=' + requestData.project_no + '&prj_id=' + requestData.prj_id+'&display=' + requestData.display);
+                
+                window.location.href = appurl + 'draftProjectPlan/add?md=&date=' + requestData.project_start_date + '&proj_no=' + requestData.project_no + '&prj_id=' + requestData.prj_id+'&display=' + requestData.display+'&project_name=' + requestData.project_name+'&manufacturing_location=' + requestData.manufacturing_location;
 
             },
             error: function(xhr, status, error) {
@@ -8800,6 +8803,7 @@ masterApp.controller('superAdminApproveForm', ['$scope', '$http', function($scop
                 projId: requestData.project_no // Project ID
             },
             success: function(data) {
+                
 
                 const params = new URLSearchParams({
                     md: '',
@@ -8814,10 +8818,13 @@ masterApp.controller('superAdminApproveForm', ['$scope', '$http', function($scop
                 // Handle success
                 // alert('Successfully assigned to HODS');
                 console.log('Response:', data); // Check the backend response
+                // alert('Successfully assigned to HODS');
                 // window.location.href = appurl + 'draftProjectPlan/add?md=';
                 // const newLocal = window.location.href = appurl + 'draftProjectPlan/add?md=""' + requestData.project_no + '&date=' + requestData.project_start_date;
                 // window.location.href = appurl + 'draftProjectPlan/add?md=&date=' + requestData.project_start_date + '&proj_no=' + requestData.project_no + '&prj_id=' + requestData.prj_id;
-                window.location.href = `${appurl}draftProjectPlan/add?${params}`;
+                // window.location.href = `${appurl}draftProjectPlan/add?${params}`;
+                window.location.href = `${appurl}draftProjectPlan/add?${params}&success=true`;
+
             },
             error: function(xhr, status, error) {
                 // Handle error

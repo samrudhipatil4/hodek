@@ -59,7 +59,7 @@ exit();
 			// Step 2: Check if group_id contains '101'
             if ($userGroup && in_array('101', explode(',', $userGroup))) {
             // Step 3: Fetch data from apqp_project_dept_user
-                    $data = DB::select(DB::raw('SELECT * FROM apqp_project_dept_user WHERE user_id = :user_id'), [
+                    $data = DB::select(DB::raw('SELECT * FROM apqp_project_dept_user WHERE user_id = :user_id AND HOD_Tasks_Flag = 0'), [
                         'user_id' => $userId,
                     ]);
                     // Extract project_id values into an array
@@ -78,9 +78,7 @@ exit();
                     
                     ]);
 
-
-                // Fetch all data using the query
-                    $pending_proj_data = DB::select(DB::raw("
+                    $sql = "
                     SELECT a.*, p.plant_code 
                     FROM apqp_new_project_info AS a 
                     LEFT JOIN 
@@ -111,10 +109,14 @@ exit();
                             )
                         )
                         AND a.project_no IN ($projectIdsString)
-                    "));
+                    ";
+
+                // Fetch all data using the query
+                    $pending_proj_data = DB::select(DB::raw($sql));
             }
 
             \Log::info([
+                // "sql" => $sql,
                 "final pending_proj_data" => $pending_proj_data,
               ]);
 
@@ -180,6 +182,7 @@ exit();
                         'pending_project_name' => $key->project_name,
                         'pending_project_manulocation' => $key->plant_code, 
                         'pending_project_startdate' => $key->project_start_date,
+                        'btn_flag' => $key->admin_complete_task,
                     );
                 }
                 return $pending_data;

@@ -1,4 +1,7 @@
+
 <?php
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 class draftProjectController extends BaseController {
 
 	protected $layout = "layouts.main";
@@ -136,6 +139,15 @@ public function getAdd($id = null)
 		$proj_no = Input::get('proj_no');
 		$date = Input::get('date');
 		$prj_id = Input::get('prj_id');
+		if(isset($_GET['display'])){
+			$display = Input::get('display');
+			$this->data['display'] = $display;
+			
+			$project_name = Input::get('project_name');
+			$manufacturing_location = Input::get('manufacturing_location');
+			$this->data['project_name'] = $project_name;
+			$this->data['manufacturing_location'] = $manufacturing_location;
+		}
 
 		$this->data['proj_no'] = $proj_no;
 		$this->data['date'] = $date;
@@ -551,13 +563,107 @@ if ($userGroup && in_array('101', explode(',', $userGroup))) {
 	public function update_release_final_flag(){
 		$input = Input::all();
 		$proj_id = $input['proj_no'];
-		DB::table('apqp_new_project_info')			
-		->where('id',$proj_id)
+		$no = $input['no'];
+		$main_user_id = $input['main_user_id'];
+
+		\Log::info([
+			"proj_id" => $proj_id,
+			"no" => $no,
+			"input" => $input,
+			"main_user_id" => $main_user_id,
+		]);
 		
-		->update(array(
-				'release_final_flag' => 0
-			));
+		// // Query 1: Total Count
+		// $query1 = 'SELECT COUNT(*) AS total_count FROM apqp_draft_project_plan WHERE project_id = ?';
+		// $result1 = DB::select($query1, [$proj_id]);
+		// $totalCount = $result1[0]->total_count;
 		
+		// // Log Query 1
+		// Log::info('Query 1:', [
+		// 	'query' => $query1,
+		// 	'bindings' => [$proj_id],
+		// 	'result' => $totalCount,
+		// ]);
+		
+		// // Query 2: Total Count with final_flag = 0
+		// $query2 = 'SELECT COUNT(*) AS total_count_final_flag_zero FROM apqp_draft_project_plan WHERE project_id = ? AND final_flag = 0';
+		// $result2 = DB::select($query2, [$proj_id]);
+		// $totalCountFinalFlagZero = $result2[0]->total_count_final_flag_zero;
+		
+		// // Log Query 2
+		// Log::info('Query 2:', [
+		// 	'query' => $query2,
+		// 	'bindings' => [$proj_id],
+		// 	'result' => $totalCountFinalFlagZero,
+		// ]);
+		
+
+
+		$query = '
+    SELECT 
+        COUNT(*) AS total_count,
+        CAST(SUM(CASE WHEN final_flag = 0 THEN 1 ELSE 0 END) AS UNSIGNED) AS total_count_final_flag_zero
+    FROM apqp_draft_project_plan 
+    WHERE project_id = ?
+';
+
+// Execute the query
+$result = DB::select($query, [$proj_id]);
+
+// Extract results and ensure numeric casting
+$totalCount = $result[0]->total_count;
+$totalCountFinalFlagZero = (int) $result[0]->total_count_final_flag_zero;
+
+// Log the query, bindings, and results
+Log::info('Query Execution Details:', [
+    'query' => $query,
+    'bindings' => [$proj_id],
+    'result' => [
+        'total_count' => $totalCount,
+        'total_count_final_flag_zero' => $totalCountFinalFlagZero,
+    ],
+]);
+	// Log results
+	Log::info([
+		"count_check" => "sachn",
+		"totalCount" => $totalCount,
+		"totalCountFinalFlagZero" => $totalCountFinalFlagZero,
+	]);
+	
+		if ($totalCount == $totalCountFinalFlagZero) {
+			
+			DB::table('apqp_new_project_info')			
+			->where('id',$proj_id)
+			
+			->update(array(
+					'release_final_flag' => 0,
+					'admin_complete_task' => 0
+				));
+		}
+		
+
+			DB::table('apqp_draft_project_plan')			
+			->whereRaw("FIND_IN_SET(?, responsibility_owner)", [$main_user_id])
+			->update(array(
+					'final_flag' => 0
+				));
+
+				
+				$project_no = DB::table('apqp_new_project_info')
+				->select('project_no')
+				->where('id', $proj_id)
+				->first();
+				\Log::info([
+					"project_no" => $project_no,
+				]);
+				
+				DB::table('apqp_project_dept_user')
+			->whereRaw("FIND_IN_SET(?, user_id)", [$main_user_id])
+			->whereRaw("FIND_IN_SET(?, project_id)", [$project_no->project_no])
+			->update(array(
+					'HOD_Tasks_Flag' => 1
+				));
+			
 Log::info("excuted");
 		// here i have to update flag 
 
@@ -576,6 +682,15 @@ Log::info("excuted");
 		$main_user_id = Session::get('uid');
 		$main_proj_no = $input['proj_no'];
 		$main_project_start_date = $input['date'];
+		if(isset($input['display'])){
+			$display = $input['display'];
+		}else{
+			$display = null;
+		}
+
+		\Log::info([
+			"display mian sachn" => $display,
+		]);
 		// $main_project_name = $input['project_name'];
 		// $main_manufacturing_location = $input['manufacturing_location'];
 		
@@ -635,7 +750,7 @@ Log::info("excuted");
 		}
 
 				  if(!empty($prjAvl)){
-			$displayStyle = ($main_user_id == 1) ? 'none' : 'block';
+			$displayStyle = 'block';
 			echo '<table style="display:' . $displayStyle . ';" align="center" border="1" width="100%" id="project_plan">
 							<tr>
 								<td>SR.NO.</td>
@@ -724,7 +839,7 @@ Log::info("excuted");
 							// Check the value of finalflag
 							if ($value->final_flag == 0) {
 								// Add the "Select HOD" default option for finalflag = 0
-								echo "<option value='' disabled selected>Select HOD</option>";
+								// echo "<option value='' disabled selected>Select HOD</option>";
 
 								foreach ($getallDept as $key1) {
 									echo '<option value="' . $key1->id . '"';
@@ -1374,6 +1489,7 @@ if ($main_user_id != 1) {
 		\Log::info([
 			"all input" => $input,
 			"project id" => $input['proj_id'],
+			"sachin " => $input['proj_id'],
 		
 		]);
 
@@ -1525,8 +1641,23 @@ if ($main_user_id != 1) {
 
 	public function checkinvolvmentofuser(){
 		$input = Input::all();
+		// \Log::info('Input data received:', $input);
+		\Log::info([
+			"check"=>"sachn main sachin here",
+			"checkyes"=>$input['genproject'],
+			'id' => $input['projId'],
+			'data' => $input['allData'],
+		]);
+
+	// dd();
+		
 $alluser =[];
 $allinvolveuser=[];
+  // Log the initialization of $alluser and $allinvolveuser
+  \Log::info("Initialized arrays", [
+	"alluser" => $alluser,
+	"allinvolveuser" => $allinvolveuser,
+]);
 		$checkrel=DB::table('apqp_draft_project_plan')
 				->select('release_project')
 				//->where('release_project',1)
@@ -1566,6 +1697,9 @@ and a.id IN(select project_id from apqp_draft_project_plan where release_project
 					}
 			}
 		}
+		\Log::info([
+			"allinvolveuser" => $allinvolveuser,
+		]);
 			return $allinvolveuser;
 	}
 	public function genDraftProj(){
@@ -1574,14 +1708,65 @@ and a.id IN(select project_id from apqp_draft_project_plan where release_project
 		\Log::info([
 			"input full upper location"=>$input,
 		]);
+		// if(isset($input['projId'])){
+		// 	$proj_id = isset($input['projId']) ? $input['projId'] : null;
+		// 	if($proj_id==""){
+		// 		$proj_id = null;
+		// 	}
+		// 	\Log::info([
+		// 		"1st if" => $proj_id,
+		// 	]);
+		// }else if(isset($input['allData'][0]['proj_id']) || $proj_id==null){
+		// 	$proj_id = isset($input['allData'][0]['proj_id']) ? $input['allData'][0]['proj_id'] : null;
+		// 	if($proj_id==""){
+		// 		$proj_id = null;
+		// 	}
+		// 	\Log::info([
+		// 		"2nd if" => $proj_id,
+		// 	]);
+		// }else if(isset($input['allData'][0]['main_projId']) || $proj_id==null){
+		// 	$proj_id = isset($input['allData'][0]['main_projId']) ? $input['allData'][0]['main_projId'] : null;
+		// 	if($proj_id==""){
+		// 		$proj_id = null;
+		// 	}
+		// 	\Log::info([
+		// 		"3rd if" => $proj_id,
+		// 	]);
+		// }else if($proj_id=="" || $proj_id==null){
+		// 	if (isset($input['allData']) && is_array($input['allData']) && !empty($input['allData'][0]['proj_id'])) {
+		// 		// Extract proj_id from the first entry of allData
+		// 		$proj_id = $input['allData'][0]['proj_id'];
+		// 	}
+		// 	\Log::info([
+		// 		"4th if" => $proj_id,
+		// 	]);
+		// }
 
-		if(isset($input['projId'])){
-			$proj_id=$input['projId'];
-		}else if(isset($input['allData'][0]['proj_id'])){
-			$proj_id=$input['allData'][0]['proj_id'];
-		}else if(isset($input['allData'][0]['main_projId'])){
-			$proj_id=$input['allData'][0]['main_projId'];
-		}
+
+
+$proj_id = null;
+
+// Check in a prioritized order
+if (!empty($input['projId'])) {
+    $proj_id = $input['projId'];
+    \Log::info(["1st check (projId)" => $proj_id]);
+} elseif (!empty($input['allData'][0]['proj_id'])) {
+    $proj_id = $input['allData'][0]['proj_id'];
+    \Log::info(["2nd check (allData[0]['proj_id'])" => $proj_id]);
+} elseif (!empty($input['allData'][0]['main_projId'])) {
+    $proj_id = $input['allData'][0]['main_projId'];
+    \Log::info(["3rd check (allData[0]['main_projId'])" => $proj_id]);
+}
+
+// Final log after determining proj_id
+\Log::info([
+    "Final proj_id" => $proj_id,
+]);
+
+
+		\Log::info([
+			"proj_id man can" => $proj_id,
+		]);
 		
 
 		$checkRev = DB::table('apqp_new_project_info')
@@ -2402,7 +2587,7 @@ and a.id IN(select project_id from apqp_draft_project_plan where release_project
 				->update(
 						 array(
 						 	'responsibility'	=>$input['user'],
-						 	'final_flag'	=>1,
+						 	'final_flag'=>1,
 						 	)
 					);
 				DB::table('apqp_draft_project_plan')

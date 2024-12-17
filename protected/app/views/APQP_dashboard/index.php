@@ -3,6 +3,27 @@
   max-width: 100%;
   overflow-x: hidden;
 }
+
+.orange-button {
+            background-color: orange;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .blue-button {
+            background-color: #007bff; /* Default blue color */
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+
+
 </style>
 <?php require app_path().'/views/apqp_header.php'; ?>
 
@@ -44,7 +65,7 @@
 
                         <uib-accordion-group ng-init="status.open=true" is-open="status.open">
                             <uib-accordion-heading>
-                                Pending Task To Me  <span class="records pull-right"> Records <i class="pull-right glyphicon" ng-class="{'glyphicon-triangle-top': status.open, 'glyphicon-triangle-bottom': !status.open}"></i></span>
+                                Pending project   <span class="records pull-right"> Records <i class="pull-right glyphicon" ng-class="{'glyphicon-triangle-top': status.open, 'glyphicon-triangle-bottom': !status.open}"></i></span>
                             </uib-accordion-heading>
                             <div class="collapsible-body">
                                 <div class="toolbar">
@@ -320,7 +341,7 @@
 
                             <uib-accordion-group ng-init="status.open=true" is-open="status.open">
                                 <uib-accordion-heading>
-                                Release Project To HOD  <span class="records pull-right"><span ng-bind="sadminpendingtaskstome.length"> </span> Records <i class="pull-right glyphicon" ng-class="{'glyphicon-triangle-top': status.open, 'glyphicon-triangle-bottom': !status.open}"></i></span>
+                                 HOD Assigned project status <span class="records pull-right"><span ng-bind="sadminpendingtaskstome.length"> </span> Records <i class="pull-right glyphicon" ng-class="{'glyphicon-triangle-top': status.open, 'glyphicon-triangle-bottom': !status.open}"></i></span>
                                 </uib-accordion-heading>
                                 <div class="collapsible-body">
                                     <div class="toolbar">
@@ -449,7 +470,7 @@
 
                             <uib-accordion-group ng-init="status.open=true" is-open="status.open">
                                 <uib-accordion-heading>
-                                HOD Task Status  <span class="records pull-right"><span ng-bind="hodstatustaskstome.length"> </span> Records <i class="pull-right glyphicon" ng-class="{'glyphicon-triangle-top': status.open, 'glyphicon-triangle-bottom': !status.open}"></i></span>
+                                HOD project Status  <span class="records pull-right"><span ng-bind="hodstatustaskstome.length"> </span> Records <i class="pull-right glyphicon" ng-class="{'glyphicon-triangle-top': status.open, 'glyphicon-triangle-bottom': !status.open}"></i></span>
                                 </uib-accordion-heading>
                                 <div class="collapsible-body">
                                     <div class="toolbar">
@@ -536,17 +557,36 @@
                                         <td><span ng-bind="pendingProjecttask.pending_project_name"></span></td>
                                            <td><span ng-bind="pendingProjecttask.pending_project_manulocation"></span></td>
                                         <td ><span ng-bind="pendingProjecttask.pending_project_startdate"></span></td>
+                                        <td style="display:none;"><span ng-bind="pendingProjecttask.btn_flag"></span></td>
                                         </td>
                                         <td>
                                             <table class="actions" >
                                                 <tr>
                                                     
                                                     <td>
-
                                                     <form ng-controller="assignToHodsForm" action="javascript:void(0);" method="post">
+                                                      <button 
+                                                     ng-style="pendingProjecttask.btn_flag == 1 ? 
+                                                    {'background-color': 'orange', 'color': 'white', 'border': 'none', 'padding': '8px 12px', 'cursor': 'pointer', 'border-radius': '4px'} : 
+                                                    {'background-color': '#007bff', 'color': 'white', 'border': 'none', 'padding': '8px 12px', 'cursor': 'pointer', 'border-radius': '4px'}"
+                                                     type="button" 
+                                                    ng-click="assignToHods(
+                                                     pendingProjecttask.pending_project_no, 
+                                                     pendingProjecttask.pending_project_name, 
+                                                     pendingProjecttask.pending_project_manulocation, 
+                                                     pendingProjecttask.pending_project_startdate,
+                                                     pendingProjecttask.pending_project_id
+                                                       )"
+                                                      ng-bind="pendingProjecttask.btn_flag == 1 ? 'Pending from HOD Release' : 'Pending from Final Release'">
+                                                      </button>
+                                                      </form>
+
+                                                    <!-- <form ng-controller="assignToHodsForm" action="javascript:void(0);" method="post">
                                                         <button 
+                                                        ng-style="pendingProjecttask.btn_flag == 1 ?
+              {'background-color': 'orange', 'color': 'white', 'border': 'none', 'padding': '8px 12px', 'cursor': 'pointer', 'border-radius': '4px'} : 
+              {'background-color': '#007bff', 'color': 'white', 'border': 'none', 'padding': '8px 12px', 'cursor': 'pointer', 'border-radius': '4px'}"
                                                             type="button" 
-                                                            style="background-color: #007bff; color: white; border: none; padding: 8px 12px; cursor: pointer; border-radius: 4px;"
                                                             ng-click="assignToHods(
                                                                 pendingProjecttask.pending_project_no, 
                                                                 pendingProjecttask.pending_project_name, 
@@ -554,9 +594,10 @@
                                                                 pendingProjecttask.pending_project_startdate,
                                                                 pendingProjecttask.pending_project_id
                                                             )">
-                                                            Assign to HODS
+                                                            {{ pendingProjecttask.btn_flag == 1 ? 'Pending from HOD Release' : 'Pending from Final Release' }}
+                                                            <!-- Assign to HODS -->
                                                         </button>
-                                                    </form>
+                                                    </form> 
                                                         
                               
                            

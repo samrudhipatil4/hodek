@@ -7,22 +7,30 @@
 	// 	$proj_no = "";
 	// 	$date = "";
 	// }
-
+    $main_user_id = Session::get('uid');
+    
 	// Check if 'proj_no' and 'date' are set in the request (URL)
-if (!isset($proj_no)) {
-    $proj_no = null;
-}
-
+    if (!isset($proj_no)) {
+        $proj_no = null;
+    }
+    
 if (!isset($date)) {
     $date = null;
 }
 if (!isset($prj_id)) {
     $prj_id = null;
 }
+
+if (!isset($display)) {
+    $display = null;
+}
+
 ?>
 	<input type="hidden" id="hod_prj_no" name="hod_prj_no" value="<?php echo $proj_no ?>">
     <input type="hidden" id="hod_date" name="hod_date" value="<?php echo $date ?>">
     <input type="hidden" id="hod_prj_id" name="hod_prj_id" value="<?php echo $prj_id ?>">
+    <input type="hidden" id="main_user_id" name="main_user_id" value="<?php echo $main_user_id ?>">
+    <input type="hidden" id="display" name="display" value="<?php echo $display ?>">
     
 
 	{{-- Check if session has 'uid' and log it --}}
@@ -168,10 +176,10 @@ table, th, td {
 
   <!-- Modal -->
   
-
+ 
 	 	
   {{-- modification we have to show when user_id != 1 --}}
-		{{-- <div style="display: none" class="col-sm-8">	
+		{{-- <div class="col-sm-8">	
 			<button  name="submit" id="updateProject" style="width: 200px;
 			height: 50px;
 			font-size: 18px;" class="btn btn-primary btn-sm" > Modify Project Plan</button>
@@ -184,7 +192,7 @@ table, th, td {
 
 		<div class="col-sm-8" 
 		
-    style="display: {{ Session::get('uid') == 1 ? 'none' : 'block' }};">
+    style="display:'block' }};">
 	{{-- <button id="coptasks" 
         style="width: 200px; height: 50px; font-size: 18px;" 
         class="btn btn-primary btn-sm">
@@ -195,7 +203,7 @@ table, th, td {
         class="btn btn-primary btn-sm">
         Modify Project Plan
     </button>
-    <button id="relProject" style="display: none" 
+    <button id="relProject"
         style="width: 200px; height: 50px; font-size: 18px;" 
         class="btn btn-primary btn-sm">
         Release Project Plan
@@ -235,13 +243,15 @@ table, th, td {
 	   const button = $(this); // $(this) refers to the dynamically clicked button
 	   const mainProjNo = button.attr('main_proj_no'); // Adjusted for 'data-*' attribute
 	   var no = button.attr('main_proj_no'); // Adjusted for 'data-*' attribute
+        var main_user_id = $("#main_user_id").val();
+
 	//    alert("I got clicked "+mainProjNo);
     // console.log(mainProjNo); // Outputs the mainProjNo value
 
 	$.ajax({
                    url:base_url+'update_release_final_flag',
                     type: 'POST',
-                    data:{proj_no:no},
+                    data:{proj_no:no,main_user_id:main_user_id,no:no},
                     
                     success: function (data) {
 
@@ -257,7 +267,7 @@ table, th, td {
 				 setTimeout(function() {
                 $("#allActivity").hide();
                 // Reload the page after hiding the element
-                location.reload(); // This reloads the current page
+                window.location.href = base_url + 'apqp_dashboard';
             }, 1000); // 3000 milliseconds = 3 seconds
 					}
                
@@ -275,6 +285,8 @@ $(document).ready(function() {
     var date = $("#hod_date").val();
     $("#proj_StartDate, #proj_sDate").val(date);
     var prj_id = $("#hod_prj_id").val();
+    var table = $("#project_plan table"); //add by sam
+    var display = $("#display").val();
 
 	console.log(proj_no,date,prj_id);
 	
@@ -345,7 +357,7 @@ $(document).ready(function() {
                             $.ajax({
                                 url: base_url + 'checkAllCondForGenDraft',
                                 type: 'POST',
-                                data: { proj_no: projId, proj_id: no },
+                                data: { proj_no: projId, proj_id: no },  
                                 success: function (data) {
                                     if (data.trim() === 'noact') {
                                         alert('Common activity is not defined. Please add activity');
@@ -370,14 +382,14 @@ $(document).ready(function() {
                                     $.ajax({
                                         url: base_url + 'saveProject',
                                         type: 'POST',
-                                        data: { proj_no: projId, date: maindate },
+                                        data: { proj_no: projId, date: maindate,display: display },
                                         success: function (data) {
                                             $("#allActivity").html(data);
                                             document.getElementById('project_rel').style.display = "block";
                                             document.getElementById('addActive').style.display = "block";
 
                                             // Call the updateProject logic
-                                            callUpdateProject(projId, date);                   						
+                                            callUpdateProject(projId, date,display);                   						
 											removeLoader();
                                         }
                                     });
@@ -709,7 +721,7 @@ $("#submitProject").click(function (evt) {
                                         document.getElementById('addActive').style.display = "block";
 
                                         // Call the updateProject logic
-                                        callUpdateProject(no, date);
+                                        callUpdateProject(no, date,display);
                                     }
                                 });
                             }
@@ -723,61 +735,87 @@ $("#submitProject").click(function (evt) {
 
 
 $("#relProject").click(function(evt){
-		  $("#relProject").prop('disabled', true);
-		$("#fade").show();
-		evt.preventDefault();
-		var date= $("#proj_StartDate").val();
-		var no = $("#proj_no").val();
-		var no1 = $('#proj_no option:selected').text();
-		var no2 =  $("#proj_no1").val();
-	    var table = $("#project_plan table");
-		var drftProjData =[];
-		
-	    $("#project_plan tr:gt(0)").each(function () {
-        var this_row = $(this);
-
-       
-         var gate = $.trim(this_row.find('td:eq(2)').html())
-        var activity = $.trim(this_row.find('td:eq(3)').html())
-        var lead_time = $.trim(this_row.find('td:eq(4)').html())
-        var cost =""
-        var respon = $.trim(this_row.find('td:eq(6)').html())
-        var start_date = $.trim(this_row.find('td:eq(7)').html())
-        var end_date = $.trim(this_row.find('td:eq(8)').html())
-        var ref_act = $.trim(this_row.find('td:eq(9)').html())
-        var act_id = $.trim(this_row.find('td:eq(10)').html())
-        var dept = $.trim(this_row.find('td:eq(11)').html())
-        var gate_id = $.trim(this_row.find('td:eq(12)').html())
-        var mat_id = $.trim(this_row.find('td:eq(13)').html())
-        var user_id = $.trim(this_row.find('td:eq(14)').html())
-
-        if(gate_id != ''){
-        drftProjData.push({ 
-                   proj_id : no, 
-                   proj_no :no2,
-                   proj_start_date:date,
-                   gate :gate_id,
-                   act :act_id,
-                   lead_time :lead_time,
-                   cost :cost,
-                   dept:dept,
-                   res:user_id,
-                   mat_id:mat_id,
-                   act_start_date:start_date,
-                   act_end_date:end_date,
-                   prev_ref_act:ref_act
-               });
-    }
-
+    $("#relProject").prop('disabled', true);
+    $("#fade").show();
+    evt.preventDefault();
     
+    var date = $("#proj_StartDate").val();
+    var no = $("#proj_no").val();
+    var no1 = $('#proj_no option:selected').text();
+    var no2 = $("#proj_no1").val();
+    var table = $("#project_plan table");
+  var drftProjData = [];
+  var prj_id = $("#hod_prj_id").val();
+//   var proj_no = $("#hod_prj_no").val();
+
+  console.log("here is : "+prj_id);
+
+    // Select all rows except header
+    $("#project_plan tr:gt(0)").each(function() {
+        // Skip rows that are gate headers (those with colspan)
+        if ($(this).find('td[colspan]').length > 0) {
+            return true; // continue to next iteration
+        }
+
+        // Only process rows that have the expected number of cells
+        if ($(this).find('td').length >= 9) {
+            var row = $(this);
+            
+            // Extract gate number from second cell
+            var gateNo = $.trim(row.find('td:eq(1)').text());
+            
+            // Extract other values
+            var gate = $.trim(row.find('td:eq(2)').text());
+            var activity = $.trim(row.find('td:eq(3)').text());
+            var lead_time = $.trim(row.find('td:eq(4)').text().split('\n')[0]); // Get first line before input
+            
+            // Get responsibility from select if present, otherwise from text
+            var respon = '';
+            var select = row.find('select[id^="dept_user"]');
+            if (select.length) {
+                respon = select.find('option:selected').text();
+            } else {
+                respon = $.trim(row.find('td:eq(6)').text());
+            }
+
+            // Get dates
+            var start_date = $.trim(row.find('td:eq(8)').text().split('\n')[0]); // Get first line before input
+            var end_date = $.trim(row.find('td:eq(9)').text());
+
+            // Get hidden values using input fields
+            var activeId = row.find('input[id^="activeId"]').val();
+            var prjId = row.find('input[id^="prjId"]').val();
+
+            if (gateNo) { // Only add if we have a gate number
+                drftProjData.push({
+                    proj_id: no ? no : prj_id,
+                    proj_no: no2,
+                    proj_start_date: date,
+                    gate: gate,
+                    act: activity,
+                    lead_time: lead_time,
+                    cost: '',
+                    dept: '', // Add department if needed
+                    res: respon,
+                    mat_id: '', // Add material ID if needed
+                    act_start_date: start_date,
+                    act_end_date: end_date,
+                    prev_ref_act: '',
+                    active_id: activeId,
+                    project_id: prjId
+                });
+            }
+        }
     });
-	 
+
+	  
 	$.ajax({
        		url:base_url+'checkinvolvmentofuser',
         	type: 'POST',
-        	data:{allData:drftProjData,genproject:'yes',projId:no},
-       		 success: function (data) {
-       		 	console.log(data);
+        	data:{genproject:'yes',projId:prj_id,allData:drftProjData},
+            success: function (data) {
+                    // alert("sachin");
+       		 	console.log("consolling by sachin");
        		 	$("#fade").hide();
        		 	 var html = "<table border='1|1'>";
        		 	  html+="<tr bgcolor='#ddd'>";
@@ -810,6 +848,8 @@ $("#relProject").click(function(evt){
 		        	type: 'POST',
 		        	data:{allData:drftProjData,genproject:'yes',projId:no},
 		       		 success: function (data) {
+                        // alert("data sachin55 done : "+data);
+                        
 		       		 	window.location.href = base_url+"draftProjectPlan";	
 		       		}
 		  		 });
@@ -823,106 +863,109 @@ $("#relProject").click(function(evt){
 	
 
 });
-// $("#updateProject").click(function(evt){
+$("#updateProject").click(function(evt){
 		
-// 		evt.preventDefault();
-// 		$("#fade").show();
-// 		var date= $("#proj_StartDate").val();
-// 		var no = $("#proj_no").val();
-// 		var no1 =  $("#proj_no1").val();
+		evt.preventDefault();
+		$("#fade").show();
+        
+		var date= $("#proj_StartDate").val();
+		var no = $("#proj_no").val();
+		var no1 =  $("#proj_no1").val();
 		
-// 	    var table = $("#project_plan table");
-// 		var drftProjData =[];
-// 		var k=0;
-// 	    $("#project_plan tr:gt(0)").each(function () {
-//         var this_row = $(this);
+	    var table = $("#project_plan table");
+        var prj_id = $("#hod_prj_id").val();
+		var drftProjData =[];
+		var k=0;
+	    $("#project_plan tr:gt(0)").each(function () {
+        var this_row = $(this);
 
-//         var id='updateBut'+k;
-//         var id1='noUpdate'+k;
-//         var id2='Update'+k;
-//         var id3='action'+k;
-//         var id4='calNo'+k;
-//         var id5='calYes'+k;
-//         var id8='updateBut'+k;
-//         var usr='dept_user'+k;
-//         var lead='editlead'+k;
-//         var cost='costperact'+k;
-//          var active_id='activeId'+k;
-//         var act_start_date = 'startdate'+k;
-//         var prjId = 'prjId'+k;
-//         $("#fade").hide();
+        var id='updateBut'+k;
+        var id1='noUpdate'+k;
+        var id2='Update'+k;
+        var id3='action'+k;
+        var id4='calNo'+k;
+        var id5='calYes'+k;
+        var id8='updateBut'+k;
+        var usr='dept_user'+k;
+        var lead='editlead'+k;
+        var cost='costperact'+k;
+         var active_id='activeId'+k;
+        var act_start_date = 'startdate'+k;
+        var prjId = 'prjId'+k;
+        $("#fade").hide();
 		
-//         $("#"+id).css("display", "block");
-//         $("#"+id1).hide(); 
-//         $("#"+id2).show(); 
-//           $("#"+id3).show(); 
-//           $("#"+id4).hide(); 
-//         $("#"+id5).show(); 
-//        $("#"+lead).show();
-//         $("#"+cost).show();
+        $("#"+id).css("display", "block");
+        $("#"+id1).hide(); 
+        $("#"+id2).show(); 
+          $("#"+id3).show(); 
+          $("#"+id4).hide(); 
+        $("#"+id5).show(); 
+       $("#"+lead).show();
+        $("#"+cost).show();
 		
         
-//         var gate = $.trim(this_row.find('td:eq(2)').html())
-//         var activity = $.trim(this_row.find('td:eq(3)').html())
-//         var lead_time = $.trim(this_row.find('td:eq(4)').html())
-//         var cost =""
-//         var respon = $.trim(this_row.find('td:eq(6)').html())
-//         var start_date = $.trim(this_row.find('td:eq(7)').html())
-//         var end_date = $.trim(this_row.find('td:eq(8)').html())
-//         var ref_act = $.trim(this_row.find('td:eq(9)').html())
-//         var act_id = $.trim(this_row.find('td:eq(10)').html())
-//         var dept = $.trim(this_row.find('td:eq(11)').html())
-//         var gate_id = $.trim(this_row.find('td:eq(12)').html())
-//         var mat_id = $.trim(this_row.find('td:eq(13)').html())
-//         var user_id = $.trim(this_row.find('td:eq(14)').html())
+        var gate = $.trim(this_row.find('td:eq(2)').html())
+        var activity = $.trim(this_row.find('td:eq(3)').html())
+        var lead_time = $.trim(this_row.find('td:eq(4)').html())
+        var cost =""
+        var respon = $.trim(this_row.find('td:eq(6)').html())
+        var start_date = $.trim(this_row.find('td:eq(7)').html())
+        var end_date = $.trim(this_row.find('td:eq(8)').html())
+        var ref_act = $.trim(this_row.find('td:eq(9)').html())
+        var act_id = $.trim(this_row.find('td:eq(10)').html())
+        var dept = $.trim(this_row.find('td:eq(11)').html())
+        var gate_id = $.trim(this_row.find('td:eq(12)').html())
+        var mat_id = $.trim(this_row.find('td:eq(13)').html())
+        var user_id = $.trim(this_row.find('td:eq(14)').html())
 
-//         if(gate_id != ''){
-//         drftProjData.push({ 
-//                    proj_id : no, 
-//                    proj_no :no1,
-//                    proj_start_date:date,
-//                    gate :gate_id,
-//                    act :act_id,
-//                    lead_time :lead_time,
-//                    cost :cost,
-//                    dept:dept,
-//                    res:user_id,
-//                    mat_id:mat_id,
-//                    act_start_date:start_date,
-//                    act_end_date:end_date,
-//                    prev_ref_act:ref_act
-//                });
-//     }
+        if(gate_id != ''){
+        drftProjData.push({ 
+                   proj_id: no ? no : prj_id,
+                   proj_no :no1,
+                   proj_start_date:date,
+                   gate :gate_id,
+                   act :act_id,
+                   lead_time :lead_time,
+                   cost :cost,
+                   dept:dept,
+                   res:user_id,
+                   mat_id:mat_id,
+                   act_start_date:start_date,
+                   act_end_date:end_date,
+                   prev_ref_act:ref_act
+               });
+    }
 
     
-//     k++;
+    k++;
 
          
-//     });
+    });
 
 	   
-// 	$.ajax({
-//        		url:base_url+'genDraftProj',
-//         	type: 'POST',
-//         	data:{allData:drftProjData,projId:no},
-//        		 success: function (data) {
-//        			$.ajax({
-//                    		url:base_url+'saveProject',
-//                     	type: 'POST',
-//                     	data:{proj_no:no,date:date},
-//                    		 success: function (data) {
-//                    		$("#allActivity").html(data); 
-//                    			updateProj();
-//                    		}
-//               		 });
-//        		}
-//   		 });
+	$.ajax({
+       		url:base_url+'genDraftProj',
+        	type: 'POST',
+        	data:{allData:drftProjData,projId:no},
+       		 success: function (data) {
+       			$.ajax({
+                   		url:base_url+'saveProject',
+                    	type: 'POST',
+                    	data:{proj_no:no,date:date},
+                   		 success: function (data) {
+                   		$("#allActivity").html(data); 
+                   			updateProj();
+                   		}
+              		 });
+       		}
+  		 });
 
-// });
+});
 
-function callUpdateProject(no, date) {
-        var drftProjData = [];
-        var k = 0;
+function callUpdateProject(no, date,display) {
+    var drftProjData = [];
+    var k = 0;
+        
 
         $("#project_plan tr:gt(0)").each(function () {
             var this_row = $(this);
@@ -956,6 +999,7 @@ function callUpdateProject(no, date) {
             }
 
             k++;
+           
         });
 
         // AJAX call to genDraftProj
@@ -967,15 +1011,19 @@ function callUpdateProject(no, date) {
                 $.ajax({
                     url: base_url + 'saveProject',
                     type: 'POST',
-                    data: { proj_no: no, date: date },
+                    data: { proj_no: no, date: date,display:display },
                     success: function (data) {
                         $("#allActivity").html(data);
                         updateProj(); // Call updateProj() if it's defined elsewhere
 						// Show the success message
-						$("#reltohod").text("Project released to HOD successfully").show();
-							}
+                        if(display != "show"){
+                            $("#reltohod").text("Project released to HOD successfully").show();
+                        }
+                        
+                    }
 						});
             }
+          
         });
     }
 
